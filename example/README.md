@@ -113,3 +113,7 @@ This inspects the real native SDK request objects, including dimension order, un
 ## Standalone customer integration
 
 A customer app only needs the packaged plugin and its normal Capacitor dependencies, then `npx cap sync`. The [plugin guide](../plugin/README.md) provides the public API and required host configuration. It does not need this example's `com.cargix.navigationdemo` package or any of its app resources.
+
+## License
+
+The example source code is licensed under the [BSD 3-Clause License](../LICENSE). See [NOTICE](../NOTICE) for the licensing scope. Use of NextBillion.ai native SDKs, APIs, map data, and services remains subject to their applicable licenses, the [NextBillion.ai Terms of Service](https://nextbillion.ai/terms-of-service), and applicable customer agreements.

@@ -2,7 +2,7 @@
   "name": "@nextbillion/navigation-capacitor",
   "version": "1.0.0",
   "description": "NextBillion native turn-by-turn navigation screens for Capacitor iOS and Android apps.",
-  "license": "UNLICENSED",
+  "license": "BSD-3-Clause",
   "type": "module",
   "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
@@ -23,7 +23,9 @@
     "ios/Sources/",
     "Package.swift",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",

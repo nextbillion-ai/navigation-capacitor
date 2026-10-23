@@ -42,7 +42,7 @@ npx cap sync
 
 See the [plugin guide](plugin/README.md) for integration examples, iOS permissions, and SPM requirements. The plugin supplies the Android Activity, manifest permissions, and SDK dependencies, which are merged automatically. iOS SDK dependencies are declared in the plugin's `Package.swift`.
 
-The build produces a distributable archive without publishing it to the npm registry. The package name in this repository is `@nextbillion/navigation-capacitor`. Before publishing, use an npm scope you control and confirm the applicable license.
+The build produces a distributable archive without publishing it to the npm registry. The package name in this repository is `@nextbillion/navigation-capacitor`. Use an npm scope you control when publishing.
 
 ## Verification and maintenance
 
@@ -55,3 +55,9 @@ This packages the plugin, installs the actual `.tgz` in a temporary consumer pro
 See the [example guide](example/README.md) for native build and device test instructions. The [architecture guide](docs/plugin-architecture.md) describes the layering, method mapping, and distribution boundaries adapted from the Flutter project.
 
 Native SDK versions are pinned to iOS Navigation **4.1.1** and Android Navigation **3.1.0**. SDK upgrades are managed in the plugin; the example does not declare NextBillion SDK versions directly.
+
+## License
+
+The Capacitor integration and example source code are licensed under the [BSD 3-Clause License](LICENSE), copyright (c) 2026, NextBillion.ai Pte. Ltd.
+
+NextBillion.ai native SDKs, APIs, map data, and services remain subject to their applicable licenses, the [NextBillion.ai Terms of Service](https://nextbillion.ai/terms-of-service), and applicable customer agreements. This repository's license does not grant access to or relicense those components or services. See [NOTICE](NOTICE) for the licensing scope and third-party notice.

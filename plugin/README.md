@@ -225,4 +225,10 @@ npm run verify:package
 
 The archive contains the built JS/types, Swift package/source, Android library/source/manifest/consumer rules and documentation. It excludes the example, test credentials, app icons, app bundle identifiers and native build output.
 
-To publish later, use the npm scope you control, choose the appropriate package license and publish from this directory. No registry publication has been performed by this repository's build scripts. SDK licensing/access terms remain separate from distribution of this bridge.
+To publish later, use an npm scope you control and publish from this directory. No registry publication has been performed by this repository's build scripts. The archive includes LICENSE and NOTICE.
+
+## License
+
+The Capacitor integration source code is licensed under the [BSD 3-Clause License](LICENSE), copyright (c) 2026, NextBillion.ai Pte. Ltd.
+
+NextBillion.ai native SDKs, APIs, map data, and services remain subject to their applicable licenses, the [NextBillion.ai Terms of Service](https://nextbillion.ai/terms-of-service), and applicable customer agreements. This package's license does not grant access to or relicense those components or services. See [NOTICE](NOTICE) for the licensing scope and third-party notice.

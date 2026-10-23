@@ -2,6 +2,7 @@
 
 ## 1.0.0 — 2026-10-23
 
+- License the Capacitor integration and example source code under BSD-3-Clause, and include LICENSE and NOTICE with SDK/service terms in the npm archive.
 - Rename the npm package to `@nextbillion/navigation-capacitor`, the archive to `nextbillion-navigation-capacitor-1.0.0.tgz`, and the Swift package product to `NextbillionNavigationCapacitor`.
 - Version the existing native navigation, embedded map, routing profiles, avoidances and truck configuration APIs as 1.0.0.
 - Update the distribution archive references and package metadata.

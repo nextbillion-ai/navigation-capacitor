@@ -20,5 +20,6 @@
     "@capacitor/cli": "7.6.9",
     "vite": "6.4.5",
     "typescript": "5.9.3"
-  }
+  },
+  "license": "BSD-3-Clause"
 }

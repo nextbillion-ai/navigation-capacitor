@@ -17,7 +17,7 @@ run(['run', 'build']);
 const [archive] = JSON.parse(run(['pack', '--workspace', 'plugin', '--ignore-scripts', '--json', '--pack-destination', artifacts], root, true));
 const packed = new Set(archive.files.map(file => file.path));
 for (const required of [
-  'package.json', 'Package.swift', 'README.md', 'dist/esm/index.js', 'dist/esm/index.d.ts',
+  'package.json', 'Package.swift', 'README.md', 'LICENSE', 'NOTICE', 'dist/esm/index.js', 'dist/esm/index.d.ts',
   'dist/esm/definitions.d.ts', 'dist/esm/web.js', 'android/build.gradle',
   'android/consumer-rules.pro', 'android/src/main/AndroidManifest.xml',
   'android/src/main/java/ai/nextbillion/navigation/capacitor/NBNavigationPlugin.java',
@@ -48,6 +48,12 @@ run(['run', 'build'], consumer);
 run(['run', 'sync'], consumer);
 
 const installed = path.join(consumer, 'node_modules/@nextbillion/navigation-capacitor');
+const installedManifest = JSON.parse(readFileSync(path.join(installed, 'package.json'), 'utf8'));
+assert.equal(installedManifest.license, 'BSD-3-Clause', 'Installed license metadata is incorrect');
+for (const file of ['LICENSE', 'NOTICE']) {
+  assert.equal(readFileSync(path.join(installed, file), 'utf8'), readFileSync(path.join(root, file), 'utf8'), `Installed ${file} differs from the repository notice`);
+}
+assert(readFileSync(path.join(installed, 'NOTICE'), 'utf8').includes('https://nextbillion.ai/terms-of-service'), 'Installed notice omits the service terms');
 assert(existsSync(path.join(installed, 'Package.swift')), 'Installed archive missing Swift package');
 const androidPlugins = JSON.parse(readFileSync(path.join(consumer, 'android/app/src/main/assets/capacitor.plugins.json')));
 assert(androidPlugins.some(plugin => plugin.classpath === 'ai.nextbillion.navigation.capacitor.NBNavigationPlugin'), 'Android auto registration failed');
@@ -75,7 +81,7 @@ const result = {
   package: archive.name, version: archive.version, archive: archive.filename,
   integrity: archive.integrity, size: archive.size, unpackedSize: archive.unpackedSize,
   consumerDirectory: consumer,
-  checks: ['archive allowlist', 'standalone archive install', 'consumer types/web build', 'Android auto registration', 'iOS auto registration', 'SPM package dependency', 'no direct host SDK dependency', 'web unavailable behavior'],
+  checks: ['archive allowlist', 'license metadata and notices', 'standalone archive install', 'consumer types/web build', 'Android auto registration', 'iOS auto registration', 'SPM package dependency', 'no direct host SDK dependency', 'web unavailable behavior'],
 };
 writeFileSync(path.join(artifacts, 'package-verification.json'), `${JSON.stringify(result, null, 2)}\n`);
 console.log(`\nPackage verification passed: ${archive.filename}\nStandalone consumer: ${consumer}`);
