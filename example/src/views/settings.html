@@ -1,0 +1,99 @@
+<div id="settings-modal" class="modal" hidden>
+  <div id="settings-backdrop" class="backdrop"></div>
+  <section class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="sheet-header">
+      <div><span class="eyebrow">MAKE IT YOUR ROUTE</span><h2 id="settings-title">Trip settings</h2></div>
+      <button id="settings-close" class="icon-button" aria-label="Close settings">×</button>
+    </div>
+    <nav class="settings-tabs" aria-label="Settings sections">
+      <button data-tab="connection">Connection</button>
+      <button data-tab="vehicle">Vehicle</button>
+      <button data-tab="avoid">Avoid</button>
+      <button data-tab="truck" id="truck-tab">Truck</button>
+    </nav>
+    <div class="settings-body">
+      <section data-section="connection">
+        <h3>Connect your map</h3>
+        <p class="section-description">One key for maps, route planning and navigation.</p>
+        <label class="field">
+          NextBillion API key
+          <div class="password-field">
+            <input id="key" type="password" autocomplete="off" placeholder="Enter your access key">
+            <button id="key-reveal" class="text-button" aria-label="Show API key">Show</button>
+          </div>
+        </label>
+        <p class="hint">Requires Maps + Navigation access. Kept in memory for this session.</p>
+        <div class="info-card">
+          <span class="live-dot"></span>
+          <div><strong>Native on both platforms</strong><p>Map gestures and route rendering use the iOS / Android SDK. Browser preview shows the interface only.</p></div>
+        </div>
+      </section>
+      <section data-section="vehicle" hidden>
+        <h3>How are you travelling?</h3>
+        <p class="section-description">Choose a vehicle to calculate suitable routes.</p>
+        <input id="profile" type="hidden" value="car">
+        <div id="profile-choices" class="profile-choices">
+          <button data-profile="car"><b>Car</b><small>Everyday driving</small></button>
+          <button data-profile="truck"><b>Truck</b><small>Vehicle restrictions</small></button>
+          <button data-profile="bike"><b>Bicycle</b><small>Cycling routes</small></button>
+          <button data-profile="motorcycle"><b>Motorcycle</b><small>Two-wheel travel</small></button>
+        </div>
+        <button id="go-truck" class="settings-row" hidden><span><strong>Configure your truck</strong><small>Dimensions, weight and cargo</small></span><span class="chevron">›</span></button>
+        <div class="setting-divider"></div>
+        <label class="switch-row"><span><strong>Simulate drive</strong><small>Try navigation without driving.</small></span><input id="simulate" type="checkbox" checked></label>
+      </section>
+      <section data-section="avoid" hidden>
+        <h3>Roads & turns to avoid</h3>
+        <p class="section-description">Select any combination for your next route.</p>
+        <div id="avoid-options" class="choice-grid"></div>
+        <button id="avoid-clear" class="text-button clear-button">Clear selections</button>
+      </section>
+      <section data-section="truck" id="truck-options" hidden>
+        <h3>Truck configuration</h3>
+        <p class="section-description">Use the vehicle's loaded dimensions and weight.</p>
+        <div class="preset-chips">
+          <button data-truck-preset="rigid">Rigid · 20 t</button>
+          <button data-truck-preset="semi">Semi trailer · 36 t</button>
+          <button id="truck-clear">Service defaults</button>
+        </div>
+        <div class="input-grid">
+          <label class="field">
+            Height
+            <div class="unit-input"><input id="truck-height" type="number" min="1" max="1000" step="1" value="350" placeholder="Default"><span>cm</span></div>
+          </label>
+          <label class="field">
+            Width
+            <div class="unit-input"><input id="truck-width" type="number" min="1" max="5000" step="1" value="250" placeholder="Default"><span>cm</span></div>
+          </label>
+          <label class="field">
+            Length
+            <div class="unit-input"><input id="truck-length" type="number" min="1" max="5000" step="1" value="1000" placeholder="Default"><span>cm</span></div>
+          </label>
+          <label class="field">
+            Total weight
+            <div class="unit-input"><input id="truck-weight" type="number" min="1" max="100000" step="1" value="20000" placeholder="Default"><span>kg</span></div>
+          </label>
+          <label class="field">
+            Axle load
+            <div class="unit-input"><input id="truck-axle" type="number" min="0" step="any" value="8.5" placeholder="Default"><span>t / axle</span></div>
+          </label>
+        </div>
+        <p class="hint">Include trailer and cargo. Provide all three dimensions together, or leave all three blank.</p>
+        <label class="switch-row"><span><strong>Prefer truck routes</strong><small>Prioritize roads suited to trucks.</small></span><input id="truck-prefer" type="checkbox"></label>
+        <label class="field">
+          Truck type
+          <select id="truck-type"><option value="">Service default</option><option value="rigid_truck">Rigid truck</option><option value="semi_trailer">Semi trailer</option><option value="b_double">B-double</option><option value="road_train">Road train</option><option value="generic_truck">Generic truck</option></select>
+        </label>
+        <p class="hint">Choosing a type enables the truck-road preference.</p>
+        <h4>Hazardous cargo</h4>
+        <p class="hint">Leave unselected if not applicable.</p>
+        <div id="hazmat-options" class="choice-grid"></div>
+      </section>
+      <p id="settings-error" role="alert"></p>
+    </div>
+    <div class="sheet-footer">
+      <button id="settings-cancel" class="button secondary">Cancel</button>
+      <button id="settings-save" class="button primary">Apply settings <span>✓</span></button>
+    </div>
+  </section>
+</div>

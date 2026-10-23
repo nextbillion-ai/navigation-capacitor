@@ -1,0 +1,31 @@
+# Changelog
+
+## 1.0.0 — 2026-10-23
+
+- Rename the npm package to `@nextbillion/navigation-capacitor`, the archive to `nextbillion-navigation-capacitor-1.0.0.tgz`, and the Swift package product to `NextbillionNavigationCapacitor`.
+- Version the existing native navigation, embedded map, routing profiles, avoidances and truck configuration APIs as 1.0.0.
+- Update the distribution archive references and package metadata.
+- Enable iOS `routeLineTracksTraversal` before presenting native guidance so traversed route styling follows navigation progress.
+- Fix the iOS embedded preview disappearing after guidance exits: reattach it to the WebView’s current container and restore the map renderer’s visibility after dismissal.
+
+## 0.3.0 — 2026-10-23
+
+- Add a real native route-preview map inside a Capacitor page on iOS and Android.
+- Add map creation, CSS viewport bounds/visibility updates, ordered stop markers, alternative route display/selection, selection events and explicit cleanup.
+- Forward Android map lifecycle and keep the existing full-screen guidance workflow.
+- Redesign the example around the map and trip panel; add transactional settings for connection, vehicle, avoidances and truck parameters, with vehicle presets and clear unit labels.
+
+## 0.2.0 — 2026-10-23
+
+- Add car, truck, bike and motorcycle profiles using Flexible routing on both platforms.
+- Add typed multi-select avoidances and truck dimensions, gross weight, axle load, hazardous cargo, road preference and vehicle types.
+- Validate configurations at both native bridge boundaries, with explicit cm/kg/tonne units and related-field errors.
+- Extend the code example with routing controls, configuration invalidation and Car/Truck integration coverage.
+
+## 0.1.0 — 2026-10-23
+
+- Extract the Capacitor demo's TypeScript contract and native implementations into an installable npm plugin.
+- Automatically register the native plugin and merge the Android navigation Activity and permissions.
+- Declare iOS Navigation SDK 4.1.1 through Swift Package Manager and Android Navigation SDK 3.1.0 through Maven.
+- Export `NativeNavigation` and `NBNavigation`, typed route/navigation results, and an explicit unsupported-browser implementation.
+- Preserve ordered stops, alternative route selection, simulation/GPS guidance, cancellation and automatic final-arrival return.

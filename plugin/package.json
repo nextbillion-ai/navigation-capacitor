@@ -1,0 +1,58 @@
+{
+  "name": "@nextbillion/navigation-capacitor",
+  "version": "1.0.0",
+  "description": "NextBillion native turn-by-turn navigation screens for Capacitor iOS and Android apps.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/esm",
+    "android/src/main/",
+    "android/build.gradle",
+    "android/consumer-rules.pro",
+    "ios/Sources/",
+    "Package.swift",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "@capacitor/core": ">=7.0.0 <8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/core": "7.6.9",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "capacitor",
+    "capacitor-plugin",
+    "navigation",
+    "nextbillion",
+    "ios",
+    "android"
+  ],
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}

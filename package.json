@@ -1,0 +1,22 @@
+{
+  "name": "nextbillion-capacitor-navigation-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "plugin",
+    "example"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace plugin && npm run build --workspace example",
+    "sync": "npm run build && npm run sync --workspace example",
+    "dev": "npm run build --workspace plugin && npm run dev --workspace example",
+    "android": "npm run sync && npm run android --workspace example",
+    "ios": "npm run sync && npm run ios --workspace example",
+    "pack:plugin": "npm pack --workspace plugin --pack-destination artifacts",
+    "verify:package": "node scripts/verify-package.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

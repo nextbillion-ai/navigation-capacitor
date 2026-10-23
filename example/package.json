@@ -1,0 +1,24 @@
+{
+  "name": "@nextbillion/navigation-capacitor-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "sync": "cap sync",
+    "android": "cap open android",
+    "ios": "cap open ios"
+  },
+  "dependencies": {
+    "@nextbillion/navigation-capacitor": "file:../plugin",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/android": "7.6.9",
+    "@capacitor/ios": "7.6.9"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9",
+    "vite": "6.4.5",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,85 @@
+# npm dependencies and local caches
+node_modules/
+.npm/
+.cache/
+.vite/
+*.tsbuildinfo
+
+# Generated web/native builds, packages and test output
+dist/
+build/
+/artifacts/
+coverage/
+*.tgz
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Local verification reports, logs and screenshots
+/docs/verification/
+
+
+# Android / Gradle local state
+.gradle/
+.cxx/
+.externalNativeBuild/
+local.properties
+key.properties
+keystore.properties
+*.hprof
+
+# iOS / Xcode / Swift Package Manager local state
+.build/
+.swiftpm/
+DerivedData/
+Pods/
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+IDEWorkspaceChecks.plist
+*.xcresult/
+*.xcarchive/
+*.dSYM/
+*.dSYM.zip
+*.ipa
+
+# Local environment values and signing files
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+!.env.*.example
+.netrc
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+
+# Logs and editor-specific state
+*.log
+npm-debug.log*
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+*.orig
+
+# Operating system metadata
+.DS_Store
+._*
+.AppleDouble/
+Thumbs.db
+Desktop.ini
+
+# Keep source, package-lock.json, Gradle Wrapper, Package.resolved and shared
+# Xcode project/scheme configuration. Capacitor copied assets and local generated
+# configuration are covered by the existing platform-specific .gitignore files.
