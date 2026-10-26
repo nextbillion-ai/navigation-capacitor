@@ -6,7 +6,7 @@ Open the full NextBillion native navigation screen from a Capacitor app. Plan a 
 
 | Dependency | Version / requirement |
 | --- | --- |
-| Capacitor | 7.x |
+| Capacitor | 7.x; iOS SPM requires 7.6.9 or later within 7.x |
 | iOS | 14+, **Swift Package Manager** |
 | iOS Navigation SDK | 4.1.1, exact SPM dependency |
 | Android | API 23+, compile SDK 35, JDK 21 |
@@ -16,7 +16,7 @@ This release provides an SPM package for iOS. CocoaPods host projects must migra
 
 ## Installation
 
-After publication, install from npm in your Capacitor app:
+Install from npm in your Capacitor app:
 
 ```sh
 npm install @nextbillion-ai/navigation-capacitor
@@ -30,7 +30,7 @@ npm install /path/to/nextbillion-ai-navigation-capacitor-1.0.0.tgz
 npx cap sync
 ```
 
-During development in this repository, the example uses a workspace dependency on `file:../plugin`. Consumers of the archive do not need the example or this repository.
+The repository example uses the local plugin through an npm workspace and `file:../plugin` for development. Customers install the published npm package with the command above; they do not need the example or this repository.
 
 For a new iOS platform, select SPM:
 
@@ -45,21 +45,12 @@ The Android manifest and SDK dependencies are merged from the plugin. The host's
 
 ## Host permissions
 
-In the iOS host's `Info.plist`, add:
+`startNavigation` automatically requests foreground location permission on both platforms, including simulation. Route calculation from supplied coordinates does not request it. Version 1.0.0 exposes no separate JavaScript permission-request method.
 
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Your location is used for turn-by-turn navigation.</string>
-```
+- **iOS:** add `NSLocationWhenInUseUsageDescription` to the host `Info.plist`. For background guidance enable Location updates and Audio background modes. The plugin requests When In Use authorization; it does not request Always authorization.
+- **Android:** location, internet, foreground-service and notification declarations are merged from the plugin/SDK manifests. The plugin requests fine/coarse location together at Start and requires Precise access. The host app requests Android 13+ notification permission if it wants navigation notifications visible. The SDK supplies the location foreground service; start navigation from a visible Activity.
 
-If your app needs background navigation, also enable Location updates and Audio background capabilities in the host, equivalent to:
-
-```xml
-<key>UIBackgroundModes</key>
-<array><string>location</string><string>audio</string></array>
-```
-
-App-specific permission explanations and background capabilities belong to the host app and are not silently modified by the plugin. Android foreground location permission is requested by the plugin at navigation start. SDK foreground services are provided by the native SDK's manifest. Verify background guidance and notification-permission behavior on your target OS; this wrapper does not implement a separate always/background-location escalation flow.
+See the [step-by-step platform configuration](https://github.com/nextbillion-ai/navigation-capacitor#2-configure-navigation-permissions) for XML, permission ownership and denied-permission handling, and the [complete integration guide](https://github.com/nextbillion-ai/navigation-capacitor/blob/main/docs/getting-started.md) for a working web UI and optional Android notification-request code. Additional Always/background permission flows are host features outside this wrapper API.
 
 ## Usage
 
@@ -261,21 +252,15 @@ From the repository root:
 
 ```sh
 npm ci
-npm run build
+npm run build:plugin
+mkdir -p artifacts
 npm run pack:plugin
 npm run verify:package
 ```
 
 The archive contains the built JS/types, Swift package/source, Android library/source/manifest/consumer rules and documentation. It excludes the example, test credentials, app icons, app bundle identifiers and native build output.
 
-The package uses the company npm organization `nextbillion-ai`. After archive verification, publish it with an npm account that has publishing access to that organization:
-
-```sh
-npm login --auth-type=web --registry=https://registry.npmjs.org/
-npm publish ./artifacts/nextbillion-ai-navigation-capacitor-1.0.0.tgz --access public --tag latest --registry=https://registry.npmjs.org/
-```
-
-Run these commands from the repository root and complete the authentication challenge when prompted. The plugin's `publishConfig` selects the public npm registry and public access. Building and packing do not publish; use a new version for every subsequent release. The archive includes LICENSE and NOTICE.
+The package uses the company npm organization `nextbillion-ai`. The archive includes LICENSE and NOTICE. See the [maintainer guide](https://github.com/nextbillion-ai/navigation-capacitor/blob/main/docs/maintaining.md) for source builds, archive verification and release publishing. Published name/version combinations cannot be reused; building and packing do not publish a release.
 
 ## License
 
