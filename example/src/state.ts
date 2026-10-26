@@ -1,4 +1,4 @@
-import type { HazmatType, PlanRouteOptions, RouteSummary, Stop } from '@nextbillion/navigation-capacitor';
+import type { HazmatType, PlanRouteOptions, RouteSummary, Stop } from '@nextbillion-ai/navigation-capacitor';
 import { presets } from './data/trips';
 
 export type RoutingSettings = Omit<PlanRouteOptions, 'apiKey' | 'stops'>;

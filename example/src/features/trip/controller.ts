@@ -1,4 +1,4 @@
-import { NativeNavigation } from '@nextbillion/navigation-capacitor';
+import { NativeNavigation } from '@nextbillion-ai/navigation-capacitor';
 import { el, errorMessage } from '../../shared/dom';
 import { validStops, type AppState, type SettingsTab } from '../../state';
 import type { MapPreview } from '../map/preview-map';

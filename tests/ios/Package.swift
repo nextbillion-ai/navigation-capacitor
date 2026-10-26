@@ -8,7 +8,7 @@ let package = Package(
     targets: [
         .testTarget(
             name: "NavigationCapacitorRoutingTests",
-            dependencies: [.product(name: "NextbillionNavigationCapacitor", package: "NavigationCapacitorPlugin")],
+            dependencies: [.product(name: "NextbillionAiNavigationCapacitor", package: "NavigationCapacitorPlugin")],
             path: "Sources"
         )
     ]

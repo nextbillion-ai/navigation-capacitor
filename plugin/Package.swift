@@ -2,10 +2,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "NextbillionNavigationCapacitor",
+    name: "NextbillionAiNavigationCapacitor",
     platforms: [.iOS(.v14)],
     products: [
-        .library(name: "NextbillionNavigationCapacitor", targets: ["NBNavigationCapacitor"])
+        .library(name: "NextbillionAiNavigationCapacitor", targets: ["NBNavigationCapacitor"])
     ],
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "7.6.9"),

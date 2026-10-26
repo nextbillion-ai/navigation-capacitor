@@ -9,7 +9,7 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
-    implementation project(':nextbillion-navigation-capacitor')
+    implementation project(':nextbillion-ai-navigation-capacitor')
 
 }
 

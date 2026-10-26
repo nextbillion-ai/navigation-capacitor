@@ -1,4 +1,4 @@
-import type { Stop } from '@nextbillion/navigation-capacitor';
+import type { Stop } from '@nextbillion-ai/navigation-capacitor';
 
 export const presets: Record<string, Stop[]> = {
   'Singapore · City drive': [{name:'Marina Bay Sands',latitude:1.2834,longitude:103.8607},{name:'Orchard Road',latitude:1.3048,longitude:103.8318}],

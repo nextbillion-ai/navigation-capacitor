@@ -1,5 +1,5 @@
 {
-  "name": "@nextbillion/navigation-capacitor",
+  "name": "@nextbillion-ai/navigation-capacitor",
   "version": "1.0.0",
   "description": "NextBillion native turn-by-turn navigation screens for Capacitor iOS and Android apps.",
   "license": "BSD-3-Clause",
@@ -56,5 +56,9 @@
     "android": {
       "src": "android"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

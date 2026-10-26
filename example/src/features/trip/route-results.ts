@@ -1,4 +1,4 @@
-import type { RouteSummary, RoutingUnit } from '@nextbillion/navigation-capacitor';
+import type { RouteSummary, RoutingUnit } from '@nextbillion-ai/navigation-capacitor';
 import { profileNames } from '../../data/routing';
 import { el } from '../../shared/dom';
 import type { DemoSettings, RoutingSettings } from '../../state';

@@ -1,6 +1,6 @@
 # nb.ai — Capacitor navigation example
 
-This is a consumer of `@nextbillion/navigation-capacitor`, not the plugin implementation. Its web UI imports the plugin package by name; its Android `MainActivity` is an ordinary `BridgeActivity`; its iOS storyboard uses the standard `CAPBridgeViewController`.
+This is a consumer of `@nextbillion-ai/navigation-capacitor`, not the plugin implementation. Its web UI imports the plugin package by name; its Android `MainActivity` is an ordinary `BridgeActivity`; its iOS storyboard uses the standard `CAPBridgeViewController`.
 
 The example is displayed as **nb.ai** on iOS and Android. The original app icon is stored in `resources/icon.png`; platform-specific icons use the same artwork.
 
