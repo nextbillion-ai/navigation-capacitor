@@ -34,7 +34,7 @@ export class SettingsController {
     this.previousFocus = document.activeElement as HTMLElement;
     this.state.modalOpen = true;
     await this.map.syncLayout();
-    this.form.fill(this.state.settings);
+    this.form.fill(this.state.settings, this.state.stops);
     this.showTab(tab);
     el('settings-modal').hidden = false;
     el('planner').setAttribute('aria-hidden', 'true');

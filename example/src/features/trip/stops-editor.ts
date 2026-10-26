@@ -11,12 +11,14 @@ export class StopsEditor {
     for (const name of Object.keys(presets)) preset.add(new Option(name, name));
     preset.onchange = () => {
       this.state.stops = presets[preset.value].map(stop => ({ ...stop }));
+      delete this.state.settings.routing.approaches;
       this.onChange();
       this.render();
     };
     el('add').onclick = () => {
       const { stops } = this.state;
       if (stops.length >= 12) return;
+      this.state.settings.routing.approaches?.splice(stops.length - 2, 0, 'unrestricted');
       stops.splice(stops.length - 1, 0, {
         name: 'New stop', latitude: stops[0].latitude, longitude: stops[0].longitude,
       });
@@ -68,6 +70,7 @@ export class StopsEditor {
       const remove = row.querySelector<HTMLButtonElement>('.remove')!;
       remove.disabled = stops.length <= 2;
       remove.onclick = () => {
+        this.state.settings.routing.approaches?.splice(Math.max(0, index - 1), 1);
         stops.splice(index, 1);
         this.onChange();
         this.render();

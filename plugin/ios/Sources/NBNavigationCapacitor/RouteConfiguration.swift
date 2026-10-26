@@ -17,7 +17,12 @@ enum RouteConfiguration {
         } else { profile = "car" }
         let options = NavigationRouteOptions(waypoints: waypoints, profile: profiles[profile]!)
         options.mapOption = .flexible
+        options.routeType = .fastest
+        options.includesAlternativeRoutes = true
+        options.alternativeCount = 2
+        options.routeShapeResolution = .full
         options.avoid = try list(input, "avoid", allowed: avoids)
+        try applyRouteOptions(input, to: options)
         guard let rawTruck = input["truck"] else { return options }
         guard profile == "truck" else { throw invalid("truck options require profile=truck.") }
         guard let truck = rawTruck as? [String: Any] else { throw invalid("truck must be an object.") }
@@ -49,14 +54,52 @@ enum RouteConfiguration {
         return options
     }
 
+    private static func applyRouteOptions(_ input: [String: Any], to options: NavigationRouteOptions) throws {
+        // Do not substitute an external clock, locale or measurement system for omitted fields.
+        if input["departureTime"] != nil {
+            options.departureTime = Int(try number(input, "departureTime", maximum: Double(Int32.max), integer: true))
+        }
+        if let raw = input["crossBorder"] {
+            guard let value = raw as? NSNumber, CFGetTypeID(value) == CFBooleanGetTypeID() else { throw invalid("crossBorder must be a boolean.") }
+            options.crossBorder = value.boolValue
+        }
+        if input["turnAngleRange"] != nil {
+            guard options.avoid.contains("sharp_turn") else { throw invalid("turnAngleRange requires avoid to include sharp_turn.") }
+            options.turnAngleRange = Int(try number(input, "turnAngleRange", maximum: 180, integer: true))
+        }
+        if let raw = input["language"] {
+            guard let language = raw as? String,
+                  let match = language.range(of: "^(?:[a-z]{2}|zh-Hans)$", options: .regularExpression),
+                  match == language.startIndex..<language.endIndex else {
+                throw invalid("language must be a two-letter code such as en/fr/zh, or zh-Hans.")
+            }
+            options.locale = Locale(identifier: language)
+        }
+        if let raw = input["unit"] {
+            guard let unit = raw as? String, let system = MeasurementSystem(description: unit) else {
+                throw invalid("unit must be metric or imperial.")
+            }
+            options.distanceMeasurementSystem = system
+        }
+        if input["approaches"] != nil {
+            let approaches = try list(input, "approaches", allowed: ["unrestricted", "curb"], deduplicate: false)
+            guard approaches.count == options.waypoints.count - 1 else {
+                throw invalid("approaches must contain one value per non-origin stop (stops.length - 1).")
+            }
+            for (index, approach) in approaches.enumerated() {
+                options.waypoints[index + 1].allowsArrivingOnOppositeSide = approach == "unrestricted"
+            }
+        }
+    }
+
     private static func invalid(_ message: String) -> NSError { NSError(domain: "NBNavigation.Configuration", code: 1, userInfo: [NSLocalizedDescriptionKey: message]) }
-    private static func list(_ input: [String: Any], _ name: String, allowed: Set<String>) throws -> [String] {
+    private static func list(_ input: [String: Any], _ name: String, allowed: Set<String>, deduplicate: Bool = true) throws -> [String] {
         guard let raw = input[name] else { return [] }
         guard let values = raw as? [String] else { throw invalid("\(name) must be an array of strings.") }
         var result: [String] = []
         for value in values {
             guard allowed.contains(value) else { throw invalid("Unsupported \(name): \(value)") }
-            if !result.contains(value) { result.append(value) }
+            if !deduplicate || !result.contains(value) { result.append(value) }
         }
         return result
     }

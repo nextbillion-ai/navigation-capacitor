@@ -7,6 +7,9 @@ export interface Stop {
   longitude: number;
 }
 
+export type Approach = 'unrestricted' | 'curb';
+export type RoutingUnit = 'metric' | 'imperial';
+
 export type RoutingProfile = 'car' | 'truck' | 'bike' | 'motorcycle';
 /** Use [] (or omit) for no additional avoidances. */
 export type Avoid = 'toll' | 'highway' | 'ferry' | 'sharp_turn' | 'uturn'
@@ -28,6 +31,9 @@ export interface TruckOptions {
   types?: TruckType[];
 }
 
+/** Both platforms request Flexible/fastest routes, full polyline6 geometry and up to two alternatives.
+ * This is a focused wrapper contract, not a passthrough for arbitrary native SDK parameters.
+ */
 export interface PlanRouteOptions {
   /** NextBillion access key with Maps and Navigation enabled. Not persisted by the wrapper. */
   apiKey: string;
@@ -36,6 +42,28 @@ export interface PlanRouteOptions {
   /** Default car. All profiles use the native SDK's Flexible routing endpoint. */
   profile?: RoutingProfile;
   avoid?: Avoid[];
+  /** Unix epoch seconds, whole number 1–2147483647 (Android SDK Int limit).
+   * Omit to let the native SDK choose its current time. Do not pass milliseconds.
+   */
+  departureTime?: number;
+  /** Whether crossing international borders is expected. Omit for the native SDK default. */
+  crossBorder?: boolean;
+  /** Whole degrees 1–180. Requires avoid to include sharp_turn.
+   * Permitted turn angles are [turnAngleRange, 360 - turnAngleRange]. Omit for service defaults.
+   */
+  turnAngleRange?: number;
+  /** One value per non-origin stop: stops[1], ..., destination. Preserve order and duplicates.
+   * Omit for native defaults; curb requests arrival on the driving side of the road.
+   */
+  approaches?: Approach[];
+  /** Lowercase two-letter instruction language (for example en, fr, zh), or zh-Hans.
+   * Native SDK language normalization applies. Omit for native SDK locale behavior.
+   */
+  language?: string;
+  /** Instruction/display units. Truck inputs remain cm/kg/tonnes; route summaries remain meters/seconds.
+   * Omit for the native SDK default measurement system.
+   */
+  unit?: RoutingUnit;
   /** Only accepted with profile=truck. Omit fields to use service defaults. */
   truck?: TruckOptions;
 }
@@ -62,6 +90,7 @@ export interface StartNavigationOptions {
 }
 
 export interface NavigationResult {
+  /** Final destination reached before the user closed navigation, or an earlier user exit. */
   reason: 'arrived' | 'cancelled';
 }
 
@@ -85,6 +114,6 @@ export interface NativeNavigationPlugin {
   addListener(eventName: 'mapRouteSelected', listener: (event: { routeId: number }) => void): Promise<PluginListenerHandle>;
   /** Calculate navigation-ready routes using the native SDK. A new plan replaces the previous plan. */
   planRoute(options: PlanRouteOptions): Promise<PlanRouteResult>;
-  /** Open a separate native screen. Resolves after arrival or user exit; startup errors reject. */
+  /** Open a separate native screen. Arrival keeps the SDK sheet open; resolves only after user exit. Startup errors reject. */
   startNavigation(options: StartNavigationOptions): Promise<NavigationResult>;
 }

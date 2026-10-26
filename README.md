@@ -54,6 +54,8 @@ This packages the plugin, installs the actual `.tgz` in a temporary consumer pro
 
 See the [example guide](example/README.md) for native build and device test instructions. The [architecture guide](docs/plugin-architecture.md) describes the layering, method mapping, and distribution boundaries adapted from the Flutter project.
 
+The [routing configuration audit](docs/routing-configuration.md) documents truck/avoid request mappings, fixed defaults, native SDK settings outside the wrapper API, and native verification.
+
 Native SDK versions are pinned to iOS Navigation **4.1.1** and Android Navigation **3.1.0**. SDK upgrades are managed in the plugin; the example does not declare NextBillion SDK versions directly.
 
 ## License

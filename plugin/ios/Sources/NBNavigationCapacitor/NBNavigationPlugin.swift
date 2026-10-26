@@ -27,6 +27,7 @@ public final class NBNavigationPlugin: CAPPlugin, CAPBridgedPlugin, NavigationVi
     private var pendingIndex = 0
     private var pendingSimulation = true
     private var closing = false
+    private var arrived = false
 
     deinit { preview?.destroy() }
 
@@ -96,8 +97,6 @@ public final class NBNavigationPlugin: CAPPlugin, CAPBridgedPlugin, NavigationVi
             do { options = try RouteConfiguration.makeOptions(configuration, waypoints: waypoints) }
             catch { call.reject(error.localizedDescription); return }
             NGLAccountManager.accessToken = key
-            options.includesAlternativeRoutes = true
-            options.routeShapeResolution = .full
             self.planning = true
             Directions.shared.calculate(options) { [weak self] routes, error in
                 DispatchQueue.main.async {
@@ -142,6 +141,7 @@ public final class NBNavigationPlugin: CAPPlugin, CAPBridgedPlugin, NavigationVi
             navigationCall?.reject("A native screen is already open."); navigationCall = nil; return
         }
         closing = false
+        arrived = false
         preview?.setNavigationActive(true)
         // Keep the selected route first, so both the service and UI navigate the same route.
         var ordered = routes
@@ -158,12 +158,12 @@ public final class NBNavigationPlugin: CAPPlugin, CAPBridgedPlugin, NavigationVi
         presenter.present(controller, animated: true)
     }
     public func navigationViewControllerDidDismiss(_ navigationViewController: NavigationViewController, byCanceling canceled: Bool) {
-        finish(reason: canceled ? "cancelled" : "arrived")
+        finish(reason: arrived || !canceled ? "arrived" : "cancelled")
     }
     public func navigationViewController(_ navigationViewController: NavigationViewController, didArriveAt waypoint: Waypoint) {
-        // A stop arrival must not close a multi-leg trip.
+        // Keep the SDK arrival sheet open until the user chooses to end navigation.
         guard let progress = service?.routeProgress, progress.legIndex == progress.route.legs.count - 1 else { return }
-        DispatchQueue.main.async { self.finish(reason: "arrived") }
+        arrived = true
     }
     private func finish(reason: String) {
         guard !closing, let call = navigationCall else { return }
@@ -177,7 +177,9 @@ public final class NBNavigationPlugin: CAPPlugin, CAPBridgedPlugin, NavigationVi
             self.preview?.setNavigationActive(false)
             call.resolve(["reason": reason])
         }
-        if let navigator, navigator.presentingViewController != nil { navigator.dismiss(animated: true, completion: complete) }
+        // The SDK may present an arrival sheet above the navigation controller.
+        // Dismiss from its presenter to remove the entire guidance hierarchy.
+        if let presenter = navigator?.presentingViewController { presenter.dismiss(animated: true, completion: complete) }
         else { complete() }
     }
 }

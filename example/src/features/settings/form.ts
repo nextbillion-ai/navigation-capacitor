@@ -1,5 +1,6 @@
-import type { Avoid, HazmatType, TruckType } from '@nextbillion/navigation-capacitor';
+import type { Avoid, HazmatType, Stop, TruckType } from '@nextbillion/navigation-capacitor';
 import { avoidChoices, hazmatChoices } from '../../data/routing';
+import { RouteSettingsForm } from './route-form';
 import { el } from '../../shared/dom';
 import type { DemoSettings, RoutingSettings, TruckFormValues } from '../../state';
 
@@ -7,9 +8,11 @@ const truckFields = ['height', 'width', 'length', 'weight', 'axle'] as const;
 
 /** Settings inputs, presets and validation. Reading the form does not apply changes. */
 export class SettingsForm {
+  private readonly routeForm = new RouteSettingsForm();
   mount(): void {
     this.renderChoices('avoid-options', avoidChoices);
     this.renderChoices('hazmat-options', hazmatChoices);
+    this.routeForm.mount();
 
     document.querySelectorAll<HTMLButtonElement>('[data-profile]').forEach(button => {
       button.onclick = () => {
@@ -18,7 +21,7 @@ export class SettingsForm {
       };
     });
     el('profile').onchange = () => this.updateProfileChoices();
-    el('avoid-clear').onclick = () => this.setChecked('avoid-options', []);
+    el('avoid-clear').onclick = () => { this.setChecked('avoid-options', []); this.routeForm.updateVisibility(); };
     el('truck-type').onchange = () => {
       if (el<HTMLSelectElement>('truck-type').value) el<HTMLInputElement>('truck-prefer').checked = true;
     };
@@ -47,7 +50,7 @@ export class SettingsForm {
     return el<HTMLInputElement>('profile').value === 'truck';
   }
 
-  fill(settings: DemoSettings): void {
+  fill(settings: DemoSettings, stops: Stop[]): void {
     el<HTMLInputElement>('key').type = 'password';
     el('key-reveal').textContent = 'Show';
     el<HTMLInputElement>('key').value = settings.apiKey;
@@ -58,6 +61,7 @@ export class SettingsForm {
     el<HTMLInputElement>('truck-prefer').checked = settings.truck.prefer;
     el<HTMLSelectElement>('truck-type').value = settings.truck.type;
     this.setChecked('hazmat-options', settings.truck.hazmats);
+    this.routeForm.fill(settings.routing, stops);
     this.updateProfileChoices();
     el('settings-error').textContent = '';
   }
@@ -140,7 +144,7 @@ export class SettingsForm {
 
   private routingOptions(): RoutingSettings {
     const profile = el<HTMLInputElement>('profile').value as RoutingSettings['profile'];
-    const options: RoutingSettings = { profile, avoid: this.checked<Avoid>('avoid-options') };
+    const options: RoutingSettings = { profile, avoid: this.checked<Avoid>('avoid-options'), ...this.routeForm.read() };
     if (profile !== 'truck') return options;
 
     const heightCm = this.optionalNumber('truck-height', 'Height (cm)', 1000);

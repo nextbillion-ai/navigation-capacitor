@@ -105,6 +105,13 @@ public class NavigationSmokeTest {
         android.graphics.Bitmap screenshot=instrumentation.getUiAutomation().takeScreenshot();
         assertNotNull(screenshot);try(java.io.FileOutputStream output=new java.io.FileOutputStream(new java.io.File(activity.getCacheDir(),name))){screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG,100,output);}screenshot.recycle();
     }
+    private android.view.accessibility.AccessibilityNodeInfo arrivalDone() {
+        android.view.accessibility.AccessibilityNodeInfo root=instrumentation.getUiAutomation().getRootInActiveWindow();
+        if(root==null)return null;
+        java.util.List<android.view.accessibility.AccessibilityNodeInfo> matches=root.findAccessibilityNodeInfosByViewId("com.cargix.navigationdemo:id/nav_dialog_done_button");
+        for(android.view.accessibility.AccessibilityNodeInfo node:matches)if(node.isVisibleToUser())return node;
+        return null;
+    }
     @Test public void planLaunchAndReturn() throws Exception { runTrip(false); }
     @Test public void truckPlanLaunchAndReturn() throws Exception { runTrip(true); }
     private void runTrip(boolean truck) throws Exception {
@@ -181,13 +188,32 @@ public class NavigationSmokeTest {
             assertTrue(js("document.getElementById('route-settings').textContent").contains("Car"));
         }
         if(!truck && "true".equals(InstrumentationRegistry.getArguments().getString("verifyArrival"))) {
-            // Short two-point trip verifies final arrival closes without a manual Back action.
+            // Arrival must keep the native sheet and bridge promise open until the user taps Done.
+            android.accessibilityservice.AccessibilityServiceInfo info=instrumentation.getUiAutomation().getServiceInfo();
+            info.flags|=android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
+            instrumentation.getUiAutomation().setServiceInfo(info);
+            js("(() => {const original=window.Capacitor.nativePromise;window.Capacitor.nativePromise=function(plugin,method,options){const promise=original.apply(this,arguments);if(plugin==='NativeNavigation'&&method==='startNavigation'){window.__arrivalSettled=false;return promise.finally(()=>{window.__arrivalSettled=true;});}return promise;};return true;})()");
             js("document.querySelectorAll('#stops .remove')[2].click();document.getElementById('plan').click();true");
             result=waitFor("document.getElementById('status').textContent",s->s.contains("Route ready")||s.contains("failed"),60);
             assertTrue(result,result.contains("Route ready"));
+            Instrumentation.ActivityMonitor arrivalMonitor=instrumentation.addMonitor("ai.nextbillion.navigation.capacitor.NBNavigationActivity",null,false);
             js("document.getElementById('start').click();true");
-            result=waitFor("document.getElementById('status').textContent",s->s.contains("Trip completed")||s.contains("closed"),180);
-            assertTrue("Final arrival did not return to app: "+result,result.contains("Trip completed"));
+            android.app.Activity arrivalScreen=arrivalMonitor.waitForActivityWithTimeout(30000);instrumentation.removeMonitor(arrivalMonitor);
+            assertNotNull("Native arrival test Activity missing",arrivalScreen);
+            deadline=SystemClock.elapsedRealtime()+180000;
+            while(arrivalDone()==null&&!arrivalScreen.isFinishing()&&SystemClock.elapsedRealtime()<deadline)SystemClock.sleep(250);
+            assertFalse("Arrival closed navigation automatically",arrivalScreen.isFinishing());
+            assertNotNull("Native arrival sheet missing",arrivalDone());
+            SystemClock.sleep(5000);
+            assertNotNull("Arrival sheet disappeared without user confirmation",arrivalDone());
+            assertEquals("Bridge resolved before user confirmation","false",js("window.__arrivalSettled"));
+            capture("arrival-awaiting-user.png");
+            assertTrue("Cannot tap native Done",arrivalDone().performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK));
+            result=waitFor("document.getElementById('status').textContent",s->s.contains("Trip completed")||s.contains("Navigation closed"),30);
+            assertTrue("Confirmed final arrival did not return arrived: "+result,result.contains("Trip completed"));
+            assertPreviewVisibility(android.view.View.VISIBLE);
+            assertTrue("Preview route lost after confirmed arrival",((java.util.List<?>)previewField("routes")).size()>0);
+            capture("arrival-user-confirmed.png");
         }
     }
 }

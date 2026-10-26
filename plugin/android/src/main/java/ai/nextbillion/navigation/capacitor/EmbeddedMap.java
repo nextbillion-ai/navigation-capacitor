@@ -62,7 +62,7 @@ final class EmbeddedMap {
                 map.setStyle(STYLE, style -> {
                     if (destroyed) return;
                     try {
-                    lines = new NavigationMapRoute(mapView, map);
+                    lines = new NavigationMapRoute(null, mapView, map, R.style.NBCapacitorPreviewRoute);
                     lines.onStart();
                     lines.showAlternativeRoutes(true);
                     lines.updateRouteDurationVisibilityTo(false);
@@ -133,7 +133,7 @@ final class EmbeddedMap {
         Set<String> distinct = new HashSet<>();
         for (Point p:points) { bounds.include(new LatLng(p.latitude(),p.longitude())); distinct.add(p.latitude()+","+p.longitude()); }
         if (distinct.size()<2) map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(points.get(0).latitude(),points.get(0).longitude()),14));
-        else map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(),(int)(32*webView.getResources().getDisplayMetrics().density)));
+        else map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(),(int)(56*webView.getResources().getDisplayMetrics().density)));
     }
     private void requireReady() { if (!ready || destroyed) throw new IllegalStateException("Create the map and wait for it to load first."); }
     boolean isReady() { return ready && !destroyed; }

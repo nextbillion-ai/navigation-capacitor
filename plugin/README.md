@@ -1,6 +1,6 @@
 # @nextbillion/navigation-capacitor
 
-Open the full NextBillion native navigation screen from a Capacitor app. Plan a route from an origin, optional intermediate stops and a destination; select a native route; start simulated or GPS guidance; return to your app on final arrival or exit. The map and guidance use the native SDK. An optional native map can be positioned inside your planning page; guidance opens in a separate full-screen native screen.
+Open the full NextBillion native navigation screen from a Capacitor app. Plan a route from an origin, optional intermediate stops and a destination; select a native route; start simulated or GPS guidance; keep the native arrival sheet open until the user chooses to end navigation, then return to your app. The map and guidance use the native SDK. An optional native map can be positioned inside your planning page; guidance opens in a separate full-screen native screen.
 
 ## Supported versions
 
@@ -150,10 +150,16 @@ The example uses a stable map area beside the trip panel (above it on phones), w
 | `profile` | `RoutingProfile`, optional | `car` (default), `truck`, `bike`, `motorcycle`. |
 | `avoid` | `Avoid[]`, optional | Multiple road/maneuver avoidances; omit or `[]` for no additional avoidances. |
 | `truck` | `TruckOptions`, optional | Only accepted with `profile: 'truck'`; fields below. |
+| `departureTime` | `number`, optional | Whole Unix epoch seconds, 1–2147483647. Omit to use the SDK's current-time handling. |
+| `crossBorder` | `boolean`, optional | Whether an international crossing is expected. `false` adds an avoidance penalty; it does not prohibit crossings. Omit for SDK defaults. |
+| `turnAngleRange` | `number`, optional | Whole degrees, 1–180; requires `avoid` to include `sharp_turn`. Omit for the service default. |
+| `approaches` | `Approach[]`, optional | `unrestricted` or `curb`, one per non-origin stop, in order. Length must equal `stops.length - 1`. |
+| `language` | `string`, optional | Two-letter instruction language such as `en`, `fr`, `zh`, or `zh-Hans`. SDK normalization/service language support applies. |
+| `unit` | `RoutingUnit`, optional | `metric` or `imperial` for instruction/display distances. Omit for SDK defaults. |
 
 `Stop`: `{ name: string; latitude: number; longitude: number }`.
 
-Returns `{ routes: RouteSummary[] }`. Each summary contains `{ id: number; distance: number; duration: number }`, with meters and seconds. Alternatives are requested but may not exist for every trip. All profiles use `option=flexible` on both platforms. Stop ordering is preserved and is not optimized.
+Returns `{ routes: RouteSummary[] }`. Each summary contains `{ id: number; distance: number; duration: number }`, with meters and seconds. Both platforms request `alternatives=true`, `altcount=2`, `route_type=fastest`, `overview=full` and `geometry=polyline6`. Alternatives may not exist for every trip. All profiles use `option=flexible` on both platforms. Stop ordering is preserved and is not optimized.
 
 Each new planning attempt clears the previous native route cache; failures do not leave an old route available. Treat route ids as temporary: they belong to the most recent plan in the current app process. Full geometry and turn instructions remain on the native side; the JS/native bridge does not transfer a large route JSON payload.
 
@@ -192,6 +198,36 @@ All truck fields are optional. Omitted fields use SDK/service defaults; they do 
 
 Both native implementations validate enum values, numeric types, ranges and related fields before sending a request. Dimensions and weight use whole numbers because iOS SDK 4.1.1 exposes integer fields. The wrapper passes these settings into the native route's request options and starts navigation with that same route. Recalculate after changing a profile, avoidance or vehicle; `startNavigation` intentionally accepts only an existing route id and simulation flag.
 
+### Optional route preferences and SDK defaults
+
+```ts
+const { routes } = await NBNavigation.planRoute({
+  apiKey: 'YOUR_NEXTBILLION_API_KEY',
+  stops, // The three-stop array from the usage example above.
+  avoid: ['sharp_turn'],
+  turnAngleRange: 120,
+  departureTime: Date.parse('2030-01-01T10:00:00+08:00') / 1000, // Date/time chosen by the user.
+  crossBorder: true,
+  approaches: ['unrestricted', 'curb'], // Intermediate stop, then destination; no origin entry.
+  language: 'fr',
+  unit: 'imperial',
+});
+```
+
+Every preference above is optional. Omit `departureTime`, `language` and `unit` to let each native SDK choose its own time, language and measurement system. The wrapper does not create a timestamp or force a locale/unit for missing fields. The demo's **SDK default** controls omit these fields rather than sending a fallback value. Clear a preference by omitting it from a fresh plan; explicit `null`, empty strings, invalid numbers and invalid enums reject.
+
+`departureTime` uses **seconds**, not JavaScript milliseconds. Its maximum reflects Android SDK 3.1.0's signed 32-bit timestamp (19 January 2038); requests beyond it reject consistently on both platforms. Automatic in-navigation rerouting follows the SDK's time policy and is not a promise to keep a future planning timestamp frozen.
+
+`crossBorder: true` removes the crossing penalty, while `false` prefers feasible routes with fewer crossings. Coverage follows the native service. A required crossing can be unavailable under restrictive settings; the service may return HTTP 422 with no feasible route. For `turnAngleRange = x`, the permitted turn angles are `[x, 360 - x]`; the option only takes effect with `avoid: ['sharp_turn', ...]`. The demo enables this field when **Sharp turns** is selected.
+
+`approaches[i]` belongs to `stops[i + 1]`. Repeated values are preserved. `curb` requests arrival on the driving side of the road; `unrestricted` permits either side. Omission uses native defaults. The iOS SDK omits the wire parameter when all stops are unrestricted, which has equivalent routing semantics. When editing stops, keep this array aligned; the demo updates it on insertion/removal and clears it when changing sample trips.
+
+Languages use the SDK's instruction-language mapping (including `zh` to `zh-Hans`); this does not translate every navigation UI label. Unit choices do not change truck input units (cm/kg/tonnes), and route summaries always use meters/seconds. Defaults can differ by platform: Android's SDK currently defaults to English/metric, while iOS uses its SDK locale and associated measurement system. The wrapper leaves these defaults untouched.
+
+`planRoute` does not forward arbitrary SDK fields. Remaining settings outside this API include custom `route_type` (fixed `fastest`), alternative count (fixed `2`), geometry format (`polyline6`/`full`), `allow`, `road_info`, `bearings`, original-shape routing, and bbox/geofence avoidances. Use the documented camelCase wrapper fields rather than native request keys such as `departure_time` or `truck_size`.
+
+Native tests cover explicit preferences, omission/default behavior, request JSON, iOS option copies, Android's route cache JSON, and invalid input. Route availability and geographic restrictions are evaluated by the routing service.
+
 ### `startNavigation(options): Promise<NavigationResult>`
 
 | Option | Type | Meaning |
@@ -201,7 +237,7 @@ Both native implementations validate enum values, numeric types, ranges and rela
 
 Returns `{ reason: 'arrived' | 'cancelled' }` after the screen closes. Invalid route ids, route requests, permission failures and Android startup timeouts reject the promise. Keep only one planning/navigation operation active at a time. The navigation promise is the exit callback; no additional event subscription is required.
 
-Intermediate stops use the SDK arrival/continue UI. Only the final leg closes the host automatically. Android uses the final leg's 30 m arrival zone to avoid requiring the SDK's final arrival-sheet confirmation; iOS uses the SDK final-arrival delegate.
+Both platforms retain the SDK arrival sheet at intermediate stops and the final destination. Arrival alone does not close the native screen or resolve `startNavigation`. The user can dismiss/continue in the SDK UI or explicitly end navigation. Closing after reaching the final destination returns `arrived`; exiting before final arrival returns `cancelled`. The embedded preview is restored only after the native navigation screen closes.
 
 ## Lifecycle and platform behavior
 

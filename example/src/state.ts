@@ -1,8 +1,8 @@
 import type { HazmatType, PlanRouteOptions, RouteSummary, Stop } from '@nextbillion/navigation-capacitor';
 import { presets } from './data/trips';
 
-export type RoutingSettings = Pick<PlanRouteOptions, 'profile' | 'avoid' | 'truck'>;
-export type SettingsTab = 'connection' | 'vehicle' | 'avoid' | 'truck';
+export type RoutingSettings = Omit<PlanRouteOptions, 'apiKey' | 'stops'>;
+export type SettingsTab = 'connection' | 'vehicle' | 'avoid' | 'truck' | 'route';
 
 /** Preserve optional truck inputs when switching to another vehicle profile. */
 export interface TruckFormValues {

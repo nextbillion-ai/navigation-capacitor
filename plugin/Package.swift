@@ -16,6 +16,7 @@ let package = Package(
             name: "NBNavigationCapacitor",
             dependencies: [
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
+                .product(name: "Cordova", package: "capacitor-swift-pm"),
                 .product(name: "NbmapNavigation", package: "navigation-distribution")
             ],
             path: "ios/Sources/NBNavigationCapacitor"

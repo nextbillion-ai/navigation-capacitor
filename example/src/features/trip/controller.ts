@@ -50,7 +50,7 @@ export class TripController {
     const route = this.state.routes.find(candidate => candidate.id === routeId);
     if (!route) return;
     this.state.selectedRouteId = routeId;
-    renderSelection(route);
+    renderSelection(route, this.state.settings.routing.unit);
     await this.map.showRoute(routeId, fit);
   }
 
@@ -95,7 +95,7 @@ export class TripController {
       if (!result.routes.length) throw new Error('No routes returned.');
       this.state.routes = result.routes;
       this.state.selectedRouteId = result.routes[0].id;
-      renderRoutes(result.routes, id => { void this.selectRoute(id).catch(this.map.fail); });
+      renderRoutes(result.routes, id => { void this.selectRoute(id).catch(this.map.fail); }, routing.unit);
       await this.selectRoute(this.state.selectedRouteId, true);
       renderRouteSettings(routing);
       this.setStatus('Route ready. Choose a route and start navigation.');

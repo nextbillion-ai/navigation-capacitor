@@ -43,15 +43,15 @@ public class NBNavigationPlugin extends Plugin {
             }
             initializeSDK(key);
             // The SDK builder reads the global key/base URL and requires SDK initialization.
-            RouteRequestParams.Builder builder=RouteRequestParams.builder().origin(points.get(0)).destination(points.get(points.size()-1)).alternatives(true).altCount(2).language("en");
-            RouteConfiguration.apply(call.getData(),builder);
+            RouteRequestParams.Builder builder=RouteRequestParams.builder().origin(points.get(0)).destination(points.get(points.size()-1));
+            RouteConfiguration.apply(call.getData(),builder,points.size());
             if(points.size()>2) builder.waypoints(new ArrayList<>(points.subList(1,points.size()-1)));
             planning=true;
             RouteFetcher.getRoute(builder.build(),new Callback<DirectionsResponse>() {
                 @Override public void onResponse(Call<DirectionsResponse> request, Response<DirectionsResponse> response) {
                     getActivity().runOnUiThread(() -> {
                         planning=false;
-                        if(!response.isSuccessful()||response.body()==null||response.body().routes()==null||response.body().routes().isEmpty()) {call.reject("Route request failed (HTTP "+response.code()+"). Check key, coverage and stops.");return;}
+                        if(!response.isSuccessful()||response.body()==null||response.body().routes()==null||response.body().routes().isEmpty()) {String detail=response.code()==422?"No route matches the selected settings. Adjust stops, avoidances or vehicle restrictions.":response.code()==400?"Check route options and stop coordinates.":"Check key, coverage and stops.";call.reject("Route request failed (HTTP "+response.code()+"). "+detail);return;}
                         routes.addAll(response.body().routes());
                         JSArray summaries=new JSArray();
                         for(int i=0;i<routes.size();i++){DirectionsRoute r=routes.get(i);JSObject item=new JSObject();item.put("id",i);item.put("distance",r.distance());item.put("duration",r.duration());summaries.put(item);}

@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- Keep the native arrival sheet open on Android and iOS until the user ends navigation. Resolve `arrived` only after user exit following final arrival; earlier exits remain `cancelled`.
+
+- Show a red destination pin in the Android embedded route preview using the native SDK waypoint style, with padding to keep the pin visible.
+
+- Dismiss the entire iOS navigation hierarchy from the host presenter after user-confirmed exit, including when the SDK has an arrival sheet. Add opt-in iPhone E2E coverage for route preferences, guidance, traversal styling and preview recovery.
+
+- Add optional departure time, border-crossing preference, turn-angle range, per-stop approaches, instruction language and measurement units on both platforms. Omitted fields preserve native SDK defaults.
+- Add example settings for these preferences, including local date/time entry, default reset and arrival-side alignment during stop edits.
+- Align native fastest/alternative defaults and declare the iOS Cordova dependency for independent plugin builds.
+- Extend released-SDK request, route-cache, option-copy and example-form verification, with an opt-in real-device route-options E2E suite.
+- Reject zero turn angles before routing (the service accepts 1–180 degrees), and explain Android HTTP 422 no-route responses with actionable guidance.
+
 ## 1.0.0 — 2026-10-23
 
 - License the Capacitor integration and example source code under BSD-3-Clause, and include LICENSE and NOTICE with SDK/service terms in the npm archive.

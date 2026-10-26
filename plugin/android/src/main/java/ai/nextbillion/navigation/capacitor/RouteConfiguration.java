@@ -12,9 +12,11 @@ final class RouteConfiguration {
     private static final Set<String> HAZMATS = values("general", "circumstantial", "explosive", "harmful_to_water");
     private static final Set<String> TRUCK_TYPES = values("rigid_truck", "semi_trailer", "b_double", "road_train", "generic_truck");
 
-    static void apply(JSONObject input, RouteRequestParams.Builder builder) {
+    static void apply(JSONObject input, RouteRequestParams.Builder builder, int stopCount) {
         String profile = input.has("profile") ? choice(input.opt("profile"), PROFILES, "profile") : "car";
-        builder.mode(profile).option("flexible").avoid(list(input, "avoid", AVOIDS));
+        builder.mode(profile).option("flexible").routeType("fastest")
+            .alternatives(true).altCount(2).avoid(list(input, "avoid", AVOIDS));
+        applyRouteOptions(input, builder, stopCount);
         if (!input.has("truck")) return;
         if (!"truck".equals(profile)) throw invalid("truck options require profile=truck.");
         Object rawTruck = input.opt("truck");
@@ -48,6 +50,34 @@ final class RouteConfiguration {
         builder.truckType(types);
     }
 
+    private static void applyRouteOptions(JSONObject input, RouteRequestParams.Builder builder, int stopCount) {
+        // Leave absent fields untouched: RouteFetcher resolves its own current time and SDK defaults.
+        if (input.has("departureTime")) builder.departureTime((int) number(input, "departureTime", Integer.MAX_VALUE, true));
+        if (input.has("crossBorder")) {
+            Object value = input.opt("crossBorder");
+            if (!(value instanceof Boolean)) throw invalid("crossBorder must be a boolean.");
+            builder.crossBorder((Boolean) value);
+        }
+        if (input.has("turnAngleRange")) {
+            List<String> avoids = list(input, "avoid", AVOIDS);
+            if (!avoids.contains("sharp_turn")) throw invalid("turnAngleRange requires avoid to include sharp_turn.");
+            builder.turnAngleRange((int) number(input, "turnAngleRange", 180, true));
+        }
+        if (input.has("language")) {
+            Object value = input.opt("language");
+            if (!(value instanceof String) || !((String) value).matches("[a-z]{2}|zh-Hans"))
+                throw invalid("language must be a two-letter code such as en/fr/zh, or zh-Hans.");
+            builder.language((String) value);
+        }
+        if (input.has("unit")) builder.unit(choice(input.opt("unit"), values("metric", "imperial"), "unit"));
+        if (input.has("approaches")) {
+            List<String> approaches = list(input, "approaches", values("unrestricted", "curb"), false);
+            if (approaches.size() != stopCount - 1)
+                throw invalid("approaches must contain one value per non-origin stop (stops.length - 1).");
+            builder.approaches(approaches);
+        }
+    }
+
     private static Set<String> values(String... values) { return new HashSet<>(Arrays.asList(values)); }
     private static IllegalArgumentException invalid(String message) { return new IllegalArgumentException(message); }
     private static String choice(Object value, Set<String> allowed, String name) {
@@ -55,6 +85,9 @@ final class RouteConfiguration {
         return (String) value;
     }
     private static List<String> list(JSONObject input, String name, Set<String> allowed) {
+        return list(input, name, allowed, true);
+    }
+    private static List<String> list(JSONObject input, String name, Set<String> allowed, boolean deduplicate) {
         if (!input.has(name)) return new ArrayList<>();
         Object raw = input.opt(name);
         if (!(raw instanceof JSONArray)) throw invalid(name + " must be an array.");
@@ -62,7 +95,7 @@ final class RouteConfiguration {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             String value = choice(array.opt(i), allowed, name);
-            if (!result.contains(value)) result.add(value);
+            if (!deduplicate || !result.contains(value)) result.add(value);
         }
         return result;
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The SDK centers waypoint images. The transparent lower half anchors the pin tip at the coordinate. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="14dp"
+    android:height="36dp"
+    android:viewportWidth="28"
+    android:viewportHeight="72">
+    <path
+        android:fillColor="#EB3333"
+        android:strokeColor="#A81F1F"
+        android:strokeWidth="1"
+        android:pathData="M14,36 C10,30 2,22 2,14 C2,7.4 7.4,2 14,2 C20.6,2 26,7.4 26,14 C26,22 18,30 14,36 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,14 m-4.5,0 a4.5,4.5 0,1 1,9 0 a4.5,4.5 0,1 1,-9 0" />
+</vector>

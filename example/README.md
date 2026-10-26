@@ -17,7 +17,8 @@ src/
     map/preview-map.ts    Native map lifecycle, bounds, visibility and rendering
     settings/
       controller.ts       Modal, tabs, keyboard focus, Apply/Cancel
-      form.ts             Form values, presets and routing validation
+      form.ts             Vehicle/cargo form values, presets and validation
+      route-form.ts       Optional departure, border, language, units and arrival-side inputs
     trip/
       controller.ts       Planning, invalidation, selection and navigation
       stops-editor.ts     Ordered stop editing and sample selection
@@ -49,7 +50,7 @@ The root uses npm workspaces. Do not install the example separately while develo
 - Dubai downtown: origin/destination.
 - Edit the coordinates/names or add/remove stops for a custom trip; visit order is preserved.
 
-Generate routes, select a result by distance/time, then start native navigation. Simulation is on by default. Exit returns `cancelled`; final arrival returns `arrived`. Intermediate stops retain the SDK continue UI.
+Generate routes, select a result by distance/time, then start native navigation. Simulation is on by default. Arrival keeps the SDK sheet and native navigation open until the user chooses to finish. Exiting before final arrival returns `cancelled`; closing navigation after reaching the final destination returns `arrived`. Intermediate stops retain the SDK continue UI.
 
 ## Map and settings
 
@@ -58,9 +59,13 @@ The planning page embeds a real native NextBillion map. On larger screens it sit
 1. Open **Settings → Connection**, enter your Maps + Navigation key and apply.
 2. Choose a sample trip or edit names/coordinates. Coordinate inputs expand on demand; stops remain ordered.
 3. Generate routes, compare route cards, select a card or tap an alternative on the native map. Use the fit button to see the whole route.
-4. Start native full-screen guidance; exit/arrival returns to the same planning page and preview.
+4. Start native full-screen guidance; explicitly ending navigation returns to the same planning page and preview, including after arrival.
 
-**Settings** groups Connection, Vehicle, Avoid and Truck. Vehicle is a four-choice selector; avoidances are selectable chips. Truck settings include Rigid/Semi-trailer presets, dimensions with cm suffixes, loaded weight in kg, axle load in t, type and hazardous cargo. Truck type enables its required truck-road preference. Service defaults clears optional vehicle restrictions. See the [plugin API](../plugin/README.md) for exact units and limits.
+**Settings** groups Connection, Vehicle, Route, Avoid and Truck. Vehicle is a four-choice selector; avoidances are selectable chips. Truck settings include Rigid/Semi-trailer presets, dimensions with cm suffixes, loaded weight in kg, axle load in t, type and hazardous cargo. Truck type enables its required truck-road preference. Service defaults clears optional vehicle restrictions. See the [plugin API](../plugin/README.md) for exact units and limits.
+
+**Route** provides an optional local departure date/time, border-crossing preference, instruction language, distance units and arrival side for each intermediate stop/destination. Leave fields at **SDK default** to omit them from the request. In **Avoid**, selecting **Sharp turns** enables an optional minimum-turn-angle field. The demo does not create a fallback departure timestamp. Custom dates use the device time zone and the native Android timestamp range, through January 2038. Route cards respect an explicitly selected metric/imperial unit.
+
+Arrival-side selections follow existing stops when another stop is inserted or removed; new stops use unrestricted arrival. Choosing a different sample trip restores SDK-default approaches. Route preferences can be reset independently of vehicle/cargo selections.
 
 Edits are drafts until **Apply settings**. **Cancel** discards changes and keeps the existing route. Applying changes to the key/profile/avoid/truck settings clears route selection and requires replanning; simulation can change without replanning. Keys stay only in memory.
 
@@ -99,7 +104,7 @@ adb shell am instrument -w -e apiKey YOUR_KEY -e verifyArrival true \
   com.cargix.navigationdemo.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-Use `adb -s SERIAL ...` if more than one device is attached. There are Car and Truck test cases. The Truck case sets dimensions, weight, axle load, avoidances, hazardous cargo and truck type, checks that the native route retains its request options, launches guidance, exits, switches back to Car and replans. The map checks cover native style load, route geometry, actual drag gestures, portrait/landscape frame synchronization, complete route visibility, settings hide/restore and cancel-without-invalidating behavior. The test drives the package API through the actual web page, plans a three-stop route, waits for SDK guidance progress, exits and verifies `cancelled`, then replans a two-stop route and checks automatic final-arrival return. It grants location permissions and skips when no `apiKey` argument is supplied. `verifyArrival` is optional; allow up to 3 minutes when enabled.
+Use `adb -s SERIAL ...` if more than one device is attached. There are Car and Truck test cases. The Truck case sets dimensions, weight, axle load, avoidances, hazardous cargo and truck type, checks that the native route retains its request options, launches guidance, exits, switches back to Car and replans. The map checks cover native style load, route geometry, actual drag gestures, portrait/landscape frame synchronization, complete route visibility, settings hide/restore and cancel-without-invalidating behavior. The test drives the package API through the actual web page, plans a three-stop route, waits for SDK guidance progress, exits and verifies `cancelled`, then replans a two-stop route and verifies that the final arrival sheet stays visible and the bridge promise remains pending, then taps the native Done control and checks return to the preview. It grants location permissions and skips when no `apiKey` argument is supplied. `verifyArrival` is optional; allow up to 3 minutes when enabled.
 
 To check request mapping and invalid configurations without a key:
 
@@ -108,7 +113,46 @@ adb shell am instrument -w -e class com.cargix.navigationdemo.RoutingConfigurati
   com.cargix.navigationdemo.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-This inspects the real native SDK request objects, including dimension order, unchanged kg/tonne values, multiple enum selections, truck-to-car defaults, and rejected inputs.
+This runs eight tests against the real Android SDK. It checks both request objects and the Retrofit/OkHttp JSON body, including all nine avoid choices, all hazmat/truck types, dimension limits/order, unchanged kg/tonne values, native route cache serialization, truck-to-car defaults, and rejected inputs. Optional time/border/turn-angle/language/unit/approach values and untouched SDK defaults are also covered. No network route request or API key is needed.
+
+To exercise the actual example settings form (custom values, Apply/Cancel, default reset and approaches after stop edits), run:
+
+```sh
+adb shell am instrument -w -e class com.cargix.navigationdemo.RouteSettingsTest \
+  com.cargix.navigationdemo.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+For a live route-options matrix on a connected Android device, supply a key at runtime:
+
+```sh
+adb shell am instrument -w -e apiKey "$NB_API_KEY" \
+  -e class com.cargix.navigationdemo.RoutePreferencesE2ETest \
+  com.cargix.navigationdemo.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+Set `NB_API_KEY` in your local shell; do not put it in source control. The suite makes real Navigation API requests through the example form and native bridge. It checks every exposed profile, avoid choice, truck type and hazardous-cargo choice, custom departure time, border preference, turn angle, approaches, languages, units, reset behavior and invalid form inputs. Representative car/truck configurations also start native simulated guidance, receive progress updates, exit and restore the embedded preview. SDK request metadata is inspected with credentials removed; the native SDK and routing responses are not mocked.
+
+The suite saves `files/route-e2e/results.json` and navigation screenshots in the debug app's private storage. They can be retrieved with `adb exec-out run-as com.cargix.navigationdemo ...`; keep verification output local. A Seattle-to-Vancouver route with restrictive border settings can legitimately return HTTP 422. That case checks the error message, discarded stale routes and successful subsequent replanning.
+
+The standalone iOS test package uses the plugin directly and the released SDK serializer:
+
+```sh
+cd tests/ios
+xcodebuild -scheme NavigationCapacitorRoutingTests-Package \
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+  -derivedDataPath /tmp/capacitor-routing-ios-build \
+  CODE_SIGNING_ALLOWED=NO test
+```
+
+Choose an installed simulator name or use its `id` from `xcrun simctl list devices`. Its nine tests check all profiles, ordered stops, actual SDK request bodies, fixed routing defaults, truck constraints, rerouting copies, optional route settings, untouched SDK clock/locale/unit defaults, and invalid inputs without making network requests. See the [routing audit](../docs/routing-configuration.md) for the supported/unsupported parameter boundary.
+
+## iOS live E2E
+
+Open `ios/App/App.xcodeproj` and select the shared **AppE2E** scheme. Choose a connected, unlocked iPhone and set your development signing team for the App and AppE2ETests targets. In Edit Scheme → Run → Arguments, add the environment variable `NB_E2E_API_KEY`; the Test action inherits these launch environment variables. Run Product → Test. Without a key, the network suite is skipped. Do not put an actual credential in the shared scheme or source control.
+
+The hosted XCTest drives the real Capacitor example form and bridge, checks request options on returned native SDK routes, and starts simulated native guidance with actual location progress. It covers every exposed profile, avoid, truck/hazmat choice, optional route preferences, reset, invalid form inputs, manual exit, final arrival and embedded-map recovery. It checks traversal styling on both the controller and its actual native map. It does not mock route responses or movement callbacks. Requests use live services; movement is simulated on the phone.
+
+Credential-free `Documents/route-e2e/results.json` and screenshots are saved in the debug app container; they can be retrieved with Xcode's Devices and Simulators window or `xcrun devicectl device copy from`. XCTest also attaches screenshots to its local result bundle. Keep test artifacts local: debug bridge logs and raw Xcode result bundles can contain runtime credentials. To reproduce one routing scenario, optionally set `NB_E2E_CASE` to its name, such as `final-arrival`; omit it for the complete matrix.
 
 ## Standalone customer integration
 

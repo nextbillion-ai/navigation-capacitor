@@ -8,6 +8,7 @@
     <nav class="settings-tabs" aria-label="Settings sections">
       <button data-tab="connection">Connection</button>
       <button data-tab="vehicle">Vehicle</button>
+      <button data-tab="route">Route</button>
       <button data-tab="avoid">Avoid</button>
       <button data-tab="truck" id="truck-tab">Truck</button>
     </nav>
@@ -47,6 +48,40 @@
         <p class="section-description">Select any combination for your next route.</p>
         <div id="avoid-options" class="choice-grid"></div>
         <button id="avoid-clear" class="text-button clear-button">Clear selections</button>
+        <label class="field route-angle-field">
+          Minimum turn angle
+          <div class="unit-input"><input id="route-turn-angle" type="number" min="1" max="180" step="1" placeholder="Service default"><span>degrees</span></div>
+        </label>
+        <p class="hint">Available with Sharp turns selected. Leave blank for the default turn-angle range.</p>
+      </section>
+      <section data-section="route" hidden>
+        <h3>Route preferences</h3>
+        <p class="section-description">Leave options at their defaults to use the native SDK's behavior.</p>
+        <label class="field">Departure time
+          <select id="route-departure-mode"><option value="">Current time (SDK default)</option><option value="custom">Choose date and time</option></select>
+        </label>
+        <label id="route-departure-field" class="field" hidden>Local departure date and time
+          <input id="route-departure-time" type="datetime-local" step="1">
+          <span class="hint">Uses your device's time zone.</span>
+        </label>
+        <label class="field">International border crossings
+          <select id="route-cross-border"><option value="">SDK default</option><option value="true">Expected — no crossing penalty</option><option value="false">Prefer avoiding crossings</option></select>
+        </label>
+        <div class="input-grid">
+          <label class="field">Guidance language
+            <input id="route-language" list="route-languages" placeholder="SDK default" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <datalist id="route-languages"><option value="en">English</option><option value="zh-Hans">Chinese</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="ca">Catalan</option></datalist>
+          </label>
+          <label class="field">Distance units
+            <select id="route-unit"><option value="">SDK default</option><option value="metric">Metric (km / m)</option><option value="imperial">Imperial (mi / ft)</option></select>
+          </label>
+        </div>
+        <label class="field">Arrival side at each stop
+          <select id="route-approaches-mode"><option value="">SDK default</option><option value="custom">Configure each stop</option></select>
+        </label>
+        <div id="route-approaches" hidden></div>
+        <p class="hint">Curb requests arrival on the driving side of the road. Applies to intermediate stops and the destination.</p>
+        <button id="route-defaults" class="text-button clear-button">Reset route preferences to SDK defaults</button>
       </section>
       <section data-section="truck" id="truck-options" hidden>
         <h3>Truck configuration</h3>
