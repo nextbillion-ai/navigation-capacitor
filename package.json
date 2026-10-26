@@ -8,9 +8,10 @@
     "example"
   ],
   "scripts": {
-    "build": "npm run build --workspace plugin && npm run build --workspace example",
+    "build:plugin": "npm run build --workspace plugin",
+    "build": "npm run build:plugin && npm run build --workspace example",
     "sync": "npm run build && npm run sync --workspace example",
-    "dev": "npm run build --workspace plugin && npm run dev --workspace example",
+    "dev": "npm run build:plugin && npm run dev --workspace example",
     "android": "npm run sync && npm run android --workspace example",
     "ios": "npm run sync && npm run ios --workspace example",
     "pack:plugin": "npm pack --workspace plugin --pack-destination artifacts",

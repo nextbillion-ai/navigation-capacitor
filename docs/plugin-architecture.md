@@ -15,7 +15,7 @@ The reference has `lib/` public models/facade/platform channels, platform-specif
 | iOS plugin/handlers | `plugin/ios/Sources/NBNavigationCapacitor/` |
 | `pubspec.yaml` plugin declaration | `plugin/package.json` Capacitor platform declaration |
 | pub package distribution | npm archive / registry package |
-| `example/` | `example/` workspace consumer |
+| `example/` | `example/` workspace consuming the local plugin through `file:../plugin` |
 
 The plugin provides embedded native route preview and the full-screen navigation workflow. It does not claim feature parity with every Flutter map/preview/offline API. The Capacitor wrapper exposes its own focused map lifecycle, bounds, stop/route rendering and selection API; it does not expose all Flutter map controls or snapshot APIs.
 
@@ -32,6 +32,8 @@ The example owns Cargix UI, sample coordinates, app identifiers/icons, iOS permi
 `cap sync` discovers Android's annotated `NBNavigationPlugin` and writes `capacitor.plugins.json`. On iOS it scans the plugin's `@objc(NBNavigationPlugin)` / `CAPBridgedPlugin` implementation, writes `packageClassList` and adds the SPM plugin product. The example needs no manual registration or direct SDK reference.
 
 ## Packaging and version compatibility
+
+Both `plugin/` and `example/` are npm workspaces. The example imports `@nextbillion-ai/navigation-capacitor` by package name and links to the local source package through `file:../plugin`. Root build and sync scripts compile the plugin before the example; Capacitor generates native references to `plugin/`. Customer integration instructions use the published npm package.
 
 `plugin/package.json` allowlists the built JS/types and native library sources. The example and native build output never enter the archive. `scripts/verify-package.mjs` installs the actual archive outside this workspace, builds a copied consumer and checks generated registration/dependency metadata. This catches packages that only work through a source-tree link.
 
