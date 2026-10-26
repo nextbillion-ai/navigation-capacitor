@@ -1,4 +1,4 @@
-import { NativeNavigation, type MapBounds } from '@nextbillion/navigation-capacitor';
+import { NativeNavigation, type MapBounds } from '@nextbillion-ai/navigation-capacitor';
 import type { AppState } from '../../state';
 import { validStops } from '../../state';
 import { el, errorMessage } from '../../shared/dom';

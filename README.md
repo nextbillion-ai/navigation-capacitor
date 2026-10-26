@@ -28,21 +28,37 @@ The example supports Car, Truck, Bicycle, and Motorcycle routing profiles; nine 
 ## Plugin distribution
 
 ```sh
+mkdir -p artifacts
 npm run pack:plugin
 ```
 
-This creates `artifacts/nextbillion-navigation-capacitor-1.0.0.tgz`, which can be delivered directly to customers.
+This creates `artifacts/nextbillion-ai-navigation-capacitor-1.0.0.tgz`, which can be delivered directly to customers.
 
 Customers install the archive from their Capacitor app directory:
 
 ```sh
-npm install /path/to/nextbillion-navigation-capacitor-1.0.0.tgz
+npm install /path/to/nextbillion-ai-navigation-capacitor-1.0.0.tgz
 npx cap sync
 ```
 
 See the [plugin guide](plugin/README.md) for integration examples, iOS permissions, and SPM requirements. The plugin supplies the Android Activity, manifest permissions, and SDK dependencies, which are merged automatically. iOS SDK dependencies are declared in the plugin's `Package.swift`.
 
-The build produces a distributable archive without publishing it to the npm registry. The package name in this repository is `@nextbillion/navigation-capacitor`. Use an npm scope you control when publishing.
+The package is named `@nextbillion-ai/navigation-capacitor`, under the company npm organization `nextbillion-ai`. Building and packing do not publish it to the registry.
+
+To publish the verified archive, use an npm account with publishing access to `nextbillion-ai`:
+
+```sh
+npm run verify:package
+npm login --auth-type=web --registry=https://registry.npmjs.org/
+npm publish ./artifacts/nextbillion-ai-navigation-capacitor-1.0.0.tgz --access public --tag latest --registry=https://registry.npmjs.org/
+```
+
+Complete the browser or terminal authentication challenge when prompted. Published name/version combinations cannot be reused; increment the plugin version for later releases. After publication, consumers can install from npm:
+
+```sh
+npm install @nextbillion-ai/navigation-capacitor
+npx cap sync
+```
 
 ## Verification and maintenance
 

@@ -1,4 +1,4 @@
-import type { Avoid, HazmatType } from '@nextbillion/navigation-capacitor';
+import type { Avoid, HazmatType } from '@nextbillion-ai/navigation-capacitor';
 
 export const avoidChoices: [Avoid, string][] = [
   ['toll', 'Tolls'], ['highway', 'Highways'], ['ferry', 'Ferries'],

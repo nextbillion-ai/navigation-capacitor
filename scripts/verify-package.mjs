@@ -30,11 +30,11 @@ for (const required of [
 ]) assert(packed.has(required), `Archive missing ${required}`);
 assert(![...packed].some(file => /(^|\/)(example|node_modules|build|local.properties)(\/|$)/.test(file)), 'Archive contains host/build files');
 
-const consumer = mkdtempSync(path.join(tmpdir(), 'nextbillion-navigation-capacitor-consumer-'));
+const consumer = mkdtempSync(path.join(tmpdir(), 'nextbillion-ai-navigation-capacitor-consumer-'));
 const example = path.join(root, 'example');
 const manifest = JSON.parse(readFileSync(path.join(example, 'package.json'), 'utf8'));
 manifest.name = 'standalone-capacitor-navigation-consumer';
-manifest.dependencies['@nextbillion/navigation-capacitor'] = `file:${path.join(artifacts, archive.filename)}`;
+manifest.dependencies['@nextbillion-ai/navigation-capacitor'] = `file:${path.join(artifacts, archive.filename)}`;
 writeFileSync(path.join(consumer, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 for (const item of ['src', 'index.html', 'tsconfig.json', 'vite.config.ts', 'capacitor.config.json', 'android', 'ios']) {
   const source = path.join(example, item);
@@ -47,7 +47,7 @@ run(['install', '--offline', '--ignore-scripts'], consumer);
 run(['run', 'build'], consumer);
 run(['run', 'sync'], consumer);
 
-const installed = path.join(consumer, 'node_modules/@nextbillion/navigation-capacitor');
+const installed = path.join(consumer, 'node_modules/@nextbillion-ai/navigation-capacitor');
 const installedManifest = JSON.parse(readFileSync(path.join(installed, 'package.json'), 'utf8'));
 assert.equal(installedManifest.license, 'BSD-3-Clause', 'Installed license metadata is incorrect');
 for (const file of ['LICENSE', 'NOTICE']) {
@@ -60,8 +60,8 @@ assert(androidPlugins.some(plugin => plugin.classpath === 'ai.nextbillion.naviga
 const iosConfig = JSON.parse(readFileSync(path.join(consumer, 'ios/App/App/capacitor.config.json')));
 assert(iosConfig.packageClassList.includes('NBNavigationPlugin'), 'iOS auto registration failed');
 const spm = readFileSync(path.join(consumer, 'ios/App/CapApp-SPM/Package.swift'), 'utf8');
-assert(spm.includes('NextbillionNavigationCapacitor'), 'SPM product not integrated');
-assert(spm.includes('node_modules/@nextbillion/navigation-capacitor'), 'SPM still uses a workspace source path');
+assert(spm.includes('NextbillionAiNavigationCapacitor'), 'SPM product not integrated');
+assert(spm.includes('node_modules/@nextbillion-ai/navigation-capacitor'), 'SPM still uses a workspace source path');
 assert(!readFileSync(path.join(consumer, 'android/app/build.gradle'), 'utf8').includes('nb-navigation-android'), 'Host declares a direct navigation SDK dependency');
 assert(!readFileSync(path.join(consumer, 'ios/App/App.xcodeproj/project.pbxproj'), 'utf8').includes('navigation-distribution'), 'Host declares a direct navigation SDK dependency');
 

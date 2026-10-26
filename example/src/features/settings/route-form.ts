@@ -1,4 +1,4 @@
-import type { Approach, RoutingUnit, Stop } from '@nextbillion/navigation-capacitor';
+import type { Approach, RoutingUnit, Stop } from '@nextbillion-ai/navigation-capacitor';
 import { el } from '../../shared/dom';
 import type { RoutingSettings } from '../../state';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@nextbillion/navigation-capacitor-example",
+  "name": "@nextbillion-ai/navigation-capacitor-example",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "ios": "cap open ios"
   },
   "dependencies": {
-    "@nextbillion/navigation-capacitor": "file:../plugin",
+    "@nextbillion-ai/navigation-capacitor": "file:../plugin",
     "@capacitor/core": "7.6.9",
     "@capacitor/android": "7.6.9",
     "@capacitor/ios": "7.6.9"

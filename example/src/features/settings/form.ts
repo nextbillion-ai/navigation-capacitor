@@ -1,4 +1,4 @@
-import type { Avoid, HazmatType, Stop, TruckType } from '@nextbillion/navigation-capacitor';
+import type { Avoid, HazmatType, Stop, TruckType } from '@nextbillion-ai/navigation-capacitor';
 import { avoidChoices, hazmatChoices } from '../../data/routing';
 import { RouteSettingsForm } from './route-form';
 import { el } from '../../shared/dom';

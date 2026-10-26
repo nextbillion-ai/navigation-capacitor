@@ -1,4 +1,4 @@
-# @nextbillion/navigation-capacitor
+# @nextbillion-ai/navigation-capacitor
 
 Open the full NextBillion native navigation screen from a Capacitor app. Plan a route from an origin, optional intermediate stops and a destination; select a native route; start simulated or GPS guidance; keep the native arrival sheet open until the user chooses to end navigation, then return to your app. The map and guidance use the native SDK. An optional native map can be positioned inside your planning page; guidance opens in a separate full-screen native screen.
 
@@ -16,10 +16,17 @@ This release provides an SPM package for iOS. CocoaPods host projects must migra
 
 ## Installation
 
-Install the delivered archive in your Capacitor app:
+After publication, install from npm in your Capacitor app:
 
 ```sh
-npm install /path/to/nextbillion-navigation-capacitor-1.0.0.tgz
+npm install @nextbillion-ai/navigation-capacitor
+npx cap sync
+```
+
+Alternatively, install the delivered archive:
+
+```sh
+npm install /path/to/nextbillion-ai-navigation-capacitor-1.0.0.tgz
 npx cap sync
 ```
 
@@ -57,7 +64,7 @@ App-specific permission explanations and background capabilities belong to the h
 ## Usage
 
 ```ts
-import { NBNavigation, type Stop } from '@nextbillion/navigation-capacitor';
+import { NBNavigation, type Stop } from '@nextbillion-ai/navigation-capacitor';
 
 const stops: Stop[] = [
   { name: 'Start', latitude: 1.2834, longitude: 103.8607 },
@@ -261,7 +268,14 @@ npm run verify:package
 
 The archive contains the built JS/types, Swift package/source, Android library/source/manifest/consumer rules and documentation. It excludes the example, test credentials, app icons, app bundle identifiers and native build output.
 
-To publish later, use an npm scope you control and publish from this directory. No registry publication has been performed by this repository's build scripts. The archive includes LICENSE and NOTICE.
+The package uses the company npm organization `nextbillion-ai`. After archive verification, publish it with an npm account that has publishing access to that organization:
+
+```sh
+npm login --auth-type=web --registry=https://registry.npmjs.org/
+npm publish ./artifacts/nextbillion-ai-navigation-capacitor-1.0.0.tgz --access public --tag latest --registry=https://registry.npmjs.org/
+```
+
+Run these commands from the repository root and complete the authentication challenge when prompted. The plugin's `publishConfig` selects the public npm registry and public access. Building and packing do not publish; use a new version for every subsequent release. The archive includes LICENSE and NOTICE.
 
 ## License
 

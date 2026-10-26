@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use the company npm scope `@nextbillion-ai/navigation-capacitor`; align example imports, native package integration and distribution archives with the organization name.
+
 - Keep the native arrival sheet open on Android and iOS until the user ends navigation. Resolve `arrived` only after user exit following final arrival; earlier exits remain `cancelled`.
 
 - Show a red destination pin in the Android embedded route preview using the native SDK waypoint style, with padding to keep the pin visible.
@@ -17,7 +19,7 @@
 ## 1.0.0 — 2026-10-23
 
 - License the Capacitor integration and example source code under BSD-3-Clause, and include LICENSE and NOTICE with SDK/service terms in the npm archive.
-- Rename the npm package to `@nextbillion/navigation-capacitor`, the archive to `nextbillion-navigation-capacitor-1.0.0.tgz`, and the Swift package product to `NextbillionNavigationCapacitor`.
+- Rename the npm package to `@nextbillion-ai/navigation-capacitor`, the archive to `nextbillion-ai-navigation-capacitor-1.0.0.tgz`, and the Swift package product to `NextbillionAiNavigationCapacitor`.
 - Version the existing native navigation, embedded map, routing profiles, avoidances and truck configuration APIs as 1.0.0.
 - Update the distribution archive references and package metadata.
 - Enable iOS `routeLineTracksTraversal` before presenting native guidance so traversed route styling follows navigation progress.
