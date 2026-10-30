@@ -16,7 +16,7 @@ Follow steps 1–5 below for a first integration. The [complete button-based exa
 | Android | API 23+, compile SDK 35, JDK 21 and Android Studio |
 | NextBillion API key | Maps and Navigation access enabled |
 
-Keep Capacitor Core, CLI and native platform versions aligned. See [Capacitor 7 environment setup](https://capacitorjs.com/docs/v7/getting-started/environment-setup). The plugin supplies iOS Navigation SDK **4.1.1** and Android Navigation SDK **3.1.0**, and Capacitor registers the bridge during synchronization.
+Keep Capacitor Core, CLI and native platform versions aligned. See [Capacitor 7 environment setup](https://capacitorjs.com/docs/v7/getting-started/environment-setup). The plugin supplies iOS Navigation SDK **4.1.4** and Android Navigation SDK **3.1.2**, and Capacitor registers the bridge during synchronization.
 
 ## 1. Install from npm
 

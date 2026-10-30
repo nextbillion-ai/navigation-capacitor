@@ -8,9 +8,9 @@ Open the full NextBillion native navigation screen from a Capacitor app. Plan a 
 | --- | --- |
 | Capacitor | 7.x; iOS SPM requires 7.6.9 or later within 7.x |
 | iOS | 14+, **Swift Package Manager** |
-| iOS Navigation SDK | 4.1.1, exact SPM dependency |
+| iOS Navigation SDK | 4.1.4, exact SPM dependency |
 | Android | API 23+, compile SDK 35, JDK 21 |
-| Android Navigation SDK | 3.1.0, Maven dependency |
+| Android Navigation SDK | 3.1.2, Maven dependency |
 
 This release provides an SPM package for iOS. CocoaPods host projects must migrate to SPM before installing this release; a CocoaPods integration is not provided. No separate NextBillion dependency should be added to the host app.
 
@@ -194,7 +194,7 @@ All truck fields are optional. Omitted fields use SDK/service defaults; they do 
 
 `avoid` supports `toll`, `highway`, `ferry`, `sharp_turn`, `uturn`, `service_road`, `left_turn`, `right_turn`, `tunnel`. Duplicate values are removed. `bbox`, `geofence_id` and the literal `none` are not part of this wrapper's typed API; use `[]` to clear avoidances. Region support, service defaults and restriction behavior follow the [Navigation API](https://docs.nextbillion.ai/routing/navigation-api) and [SDK request parameters](https://docs.nextbillion.ai/routing/android-navigation-sdk/map-display-and-navigation).
 
-Both native implementations validate enum values, numeric types, ranges and related fields before sending a request. Dimensions and weight use whole numbers because iOS SDK 4.1.1 exposes integer fields. The wrapper passes these settings into the native route's request options and starts navigation with that same route. Recalculate after changing a profile, avoidance or vehicle; `startNavigation` intentionally accepts only an existing route id and simulation flag.
+Both native implementations validate enum values, numeric types, ranges and related fields before sending a request. Dimensions and weight use whole numbers because the native SDK exposes integer fields. The wrapper passes these settings into the native route's request options and starts navigation with that same route. Recalculate after changing a profile, avoidance or vehicle; `startNavigation` intentionally accepts only an existing route id and simulation flag.
 
 ### Optional route preferences and SDK defaults
 
@@ -214,7 +214,7 @@ const { routes } = await NBNavigation.planRoute({
 
 Every preference above is optional. Omit `departureTime`, `language` and `unit` to let each native SDK choose its own time, language and measurement system. The wrapper does not create a timestamp or force a locale/unit for missing fields. The demo's **SDK default** controls omit these fields rather than sending a fallback value. Clear a preference by omitting it from a fresh plan; explicit `null`, empty strings, invalid numbers and invalid enums reject.
 
-`departureTime` uses **seconds**, not JavaScript milliseconds. Its maximum reflects Android SDK 3.1.0's signed 32-bit timestamp (19 January 2038); requests beyond it reject consistently on both platforms. Automatic in-navigation rerouting follows the SDK's time policy and is not a promise to keep a future planning timestamp frozen.
+`departureTime` uses **seconds**, not JavaScript milliseconds. Its maximum reflects the Android SDK's signed 32-bit timestamp (19 January 2038); requests beyond it reject consistently on both platforms. Automatic in-navigation rerouting follows the SDK's time policy and is not a promise to keep a future planning timestamp frozen.
 
 `crossBorder: true` removes the crossing penalty, while `false` prefers feasible routes with fewer crossings. Coverage follows the native service. A required crossing can be unavailable under restrictive settings; the service may return HTTP 422 with no feasible route. For `turnAngleRange = x`, the permitted turn angles are `[x, 360 - x]`; the option only takes effect with `avoid: ['sharp_turn', ...]`. The demo enables this field when **Sharp turns** is selected.
 
