@@ -1,5 +1,5 @@
 {
-  "originHash" : "760ce6bb9bbb0198b7d0d4b637705d9af6410bbfd409679fc8b39d4c80529ad2",
+  "originHash" : "17267b2a851ef6f6a9284ae68b8220d0af791760e8ac8f4811560f23e73f10f3",
   "pins" : [
     {
       "identity" : "capacitor-swift-pm",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nextbillion-ai/navigation-distribution",
       "state" : {
-        "revision" : "256c4213a298491fe08eb3b9e33fdf54a73be1f3",
-        "version" : "4.1.1"
+        "revision" : "484fd67399c810d5d8d12418a90e0db2ef94bfb1",
+        "version" : "4.1.4"
       }
     }
   ],

@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "capacitor-swift-pm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ionic-team/capacitor-swift-pm.git",
+      "state" : {
+        "revision" : "ac5dacb8f1f5abf4b8297b34cfc3860d3f9202df",
+        "version" : "7.6.9"
+      }
+    },
+    {
+      "identity" : "navigation-distribution",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nextbillion-ai/navigation-distribution",
+      "state" : {
+        "revision" : "484fd67399c810d5d8d12418a90e0db2ef94bfb1",
+        "version" : "4.1.4"
+      }
+    }
+  ],
+  "version" : 2
+}

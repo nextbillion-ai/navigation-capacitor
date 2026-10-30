@@ -37,7 +37,7 @@ Both `plugin/` and `example/` are npm workspaces. The example imports `@nextbill
 
 `plugin/package.json` allowlists the built JS/types and native library sources. The example and native build output never enter the archive. `scripts/verify-package.mjs` installs the actual archive outside this workspace, builds a copied consumer and checks generated registration/dependency metadata. This catches packages that only work through a source-tree link.
 
-The first release targets Capacitor 7 and iOS SPM. SDK versions remain the previously verified iOS 4.1.1 / Android 3.1.0; older versions in the Flutter reference are not copied. CocoaPods support is not declared for this release.
+The first release targets Capacitor 7 and iOS SPM. The current native SDK dependencies are iOS 4.1.4 / Android 3.1.2; older versions in the Flutter reference are not copied. CocoaPods support is not declared for this release.
 
 ## Embedded preview
 

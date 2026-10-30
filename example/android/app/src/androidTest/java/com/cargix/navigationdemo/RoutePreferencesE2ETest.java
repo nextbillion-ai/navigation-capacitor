@@ -53,7 +53,17 @@ public class RoutePreferencesE2ETest {
     }
     private void preview() throws Exception {
         Object preview=field(plugin(),"preview");assertNotNull(preview);assertEquals(Boolean.TRUE,field(preview,"ready"));
-        View holder=(View)field(preview,"holder");assertEquals(View.VISIBLE,holder.getVisibility());assertTrue(holder.getWidth()>0&&holder.getHeight()>0);
+        View holder=(View)field(preview,"holder");
+        // The page updates its status before the asynchronous updateMap bridge call finishes.
+        long deadline=SystemClock.elapsedRealtime()+5000;
+        int[] visibility={View.INVISIBLE};
+        do {
+            instrumentation.runOnMainSync(()->visibility[0]=holder.getVisibility());
+            if(visibility[0]==View.VISIBLE)break;
+            SystemClock.sleep(50);
+        } while(SystemClock.elapsedRealtime()<deadline);
+        assertEquals("Native preview did not recover within five seconds",View.VISIBLE,visibility[0]);
+        assertTrue(holder.getWidth()>0&&holder.getHeight()>0);
         assertFalse("Preview lost route geometry",((List<?>)field(preview,"routes")).isEmpty());
     }
     private void open() throws Exception {js("document.getElementById('settings-open').click();true");waitTrue("!document.getElementById('settings-modal').hidden",10);}

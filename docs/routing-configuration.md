@@ -1,6 +1,6 @@
 # Native routing configuration audit
 
-Checked on 2026-10-26 against the plugin's pinned iOS Navigation SDK **4.1.1** and Android Navigation SDK **3.1.0**. The local `navigation-ios` and `navigation-android` sources were used to trace serialization and rerouting. Assertions run against the released native SDK binaries, since local development branches can differ from published versions.
+Rechecked on 2026-10-30 against the plugin's pinned iOS Navigation SDK **4.1.4** and Android Navigation SDK **3.1.2**. The local `navigation-ios` and `navigation-android` sources were used to trace serialization and rerouting. Assertions run against the released native SDK binaries, since local development branches can differ from published versions.
 
 ## Supported configuration
 
@@ -47,7 +47,7 @@ The wrapper still does not expose custom `route_type`, `allow`, `road_info`, `be
 
 Android `RouteFetcher` attaches request options to the returned native route. The plugin stores that route with `DirectionsRoute.toJson()` and restores it with `fromJson()` when opening its Activity. Tests verify all truck/avoid fields after this exact route JSON round-trip, and after the SDK builder copy used by rerouting.
 
-iOS retains native `Route` objects in memory and passes them to `NBNavigationService`. The SDK's rerouting path copies the selected route's options before replacing waypoints. Tests verify all restrictions in the copied options' serialized request body. The bridge does not archive iOS route options or persist route ids across process termination. The SDK 4.1.1 `NavigationRouteOptions` subclass also rejects secure NSKeyedArchiver archiving; that is outside this in-memory workflow.
+iOS retains native `Route` objects in memory and passes them to `NBNavigationService`. The SDK's rerouting path copies the selected route's options before replacing waypoints. Tests verify all restrictions in the copied options' serialized request body. The bridge does not archive iOS route options or persist route ids across process termination. Secure NSKeyedArchiver archiving is outside this in-memory workflow.
 
 ## Arrival confirmation
 
