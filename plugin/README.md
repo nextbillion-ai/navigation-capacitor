@@ -26,7 +26,7 @@ npx cap sync
 Alternatively, install the delivered archive:
 
 ```sh
-npm install /path/to/nextbillion-ai-navigation-capacitor-1.0.0.tgz
+npm install /path/to/nextbillion-ai-navigation-capacitor-1.0.1.tgz
 npx cap sync
 ```
 
@@ -45,7 +45,7 @@ The Android manifest and SDK dependencies are merged from the plugin. The host's
 
 ## Host permissions
 
-`startNavigation` automatically requests foreground location permission on both platforms, including simulation. Route calculation from supplied coordinates does not request it. Version 1.0.0 exposes no separate JavaScript permission-request method.
+`startNavigation` automatically requests foreground location permission on both platforms, including simulation. Route calculation from supplied coordinates does not request it. Version 1.0.1 exposes no separate JavaScript permission-request method.
 
 - **iOS:** add `NSLocationWhenInUseUsageDescription` to the host `Info.plist`. For background guidance enable Location updates and Audio background modes. The plugin requests When In Use authorization; it does not request Always authorization.
 - **Android:** location, internet, foreground-service and notification declarations are merged from the plugin/SDK manifests. The plugin requests fine/coarse location together at Start and requires Precise access. The host app requests Android 13+ notification permission if it wants navigation notifications visible. The SDK supplies the location foreground service; start navigation from a visible Activity.

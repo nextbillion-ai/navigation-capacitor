@@ -2,11 +2,6 @@
 
 ## Unreleased
 
-- Upgrade the Android Navigation SDK from 3.1.0 to 3.1.2 and the iOS Navigation SDK from 4.1.1 to 4.1.4.
-- Refresh the example and routing-test Swift package lockfiles, SDK version documentation and native routing configuration audit.
-- Fix intermittent Android E2E preview assertions by waiting up to five seconds for asynchronous native map recovery after navigation, while retaining visibility, layout and route-geometry checks.
-- Verify routing configuration, truck/avoid options, simulated guidance, user-confirmed arrival and preview recovery against the updated SDKs on physical devices and simulators.
-
 - Use the company npm scope `@nextbillion-ai/navigation-capacitor`; align example imports, native package integration and distribution archives with the organization name.
 
 - Keep the native arrival sheet open on Android and iOS until the user ends navigation. Resolve `arrived` only after user exit following final arrival; earlier exits remain `cancelled`.
@@ -20,6 +15,13 @@
 - Align native fastest/alternative defaults and declare the iOS Cordova dependency for independent plugin builds.
 - Extend released-SDK request, route-cache, option-copy and example-form verification, with an opt-in real-device route-options E2E suite.
 - Reject zero turn angles before routing (the service accepts 1–180 degrees), and explain Android HTTP 422 no-route responses with actionable guidance.
+
+## 1.0.1 — 2026-10-30
+
+- Upgrade the Android Navigation SDK from 3.1.0 to 3.1.2 and the iOS Navigation SDK from 4.1.1 to 4.1.4.
+- Refresh the example and routing-test Swift package lockfiles, SDK version documentation and native routing configuration audit.
+- Fix intermittent Android E2E preview assertions by waiting up to five seconds for asynchronous native map recovery after navigation, while retaining visibility, layout and route-geometry checks.
+- Verify routing configuration, truck/avoid options, simulated guidance, user-confirmed arrival and preview recovery against the updated SDKs on physical devices and simulators.
 
 ## 1.0.0 — 2026-10-23
 
