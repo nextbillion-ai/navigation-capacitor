@@ -2,7 +2,7 @@
 
 Add native turn-by-turn navigation to a Capacitor app on iOS and Android. Request routes from an origin, optional stops and a destination, let the driver select a route, and open the NextBillion native navigation screen. When the driver closes navigation, your app resumes. A native map preview inside your page is optional.
 
-The published package is [@nextbillion-ai/navigation-capacitor](https://www.npmjs.com/package/@nextbillion-ai/navigation-capacitor), currently **1.0.0**.
+The npm package is [@nextbillion-ai/navigation-capacitor](https://www.npmjs.com/package/@nextbillion-ai/navigation-capacitor). This source release is **1.0.1**.
 
 Follow steps 1–5 below for a first integration. The [complete button-based example](docs/getting-started.md) adds a working Plan → Select route → Start flow and an optional Android notification-permission implementation.
 
@@ -23,7 +23,7 @@ Keep Capacitor Core, CLI and native platform versions aligned. See [Capacitor 7 
 In **your existing Capacitor app directory**:
 
 ```sh
-npm install @nextbillion-ai/navigation-capacitor@1.0.0
+npm install @nextbillion-ai/navigation-capacitor@1.0.1
 npm run build
 npx cap sync
 ```
@@ -32,7 +32,7 @@ Use your own web build command if different. If your iOS project uses CocoaPods,
 
 ## 2. Configure navigation permissions
 
-Route calculation from supplied coordinates does not request device location permission. `startNavigation` requests location permission automatically on both platforms, **including simulated navigation**. Call it from your Start button while the app is visible. Version 1.0.0 has no separate `NBNavigation.requestPermissions()` API.
+Route calculation from supplied coordinates does not request device location permission. `startNavigation` requests location permission automatically on both platforms, **including simulated navigation**. Call it from your Start button while the app is visible. Version 1.0.1 has no separate `NBNavigation.requestPermissions()` API.
 
 ### iOS setup
 
@@ -114,7 +114,7 @@ These declarations are **already merged from the plugin** into your app's manife
 | `POST_NOTIFICATIONS` | Show navigation notifications on Android 13+ | Declared by the plugin; your host app requests it |
 | Service type `location` | Identify the SDK's navigation foreground service | Supplied by the native SDK manifest |
 
-Version 1.0.0 requires fine location for Android guidance. If only approximate access is granted or permission is denied, Start rejects. The user can enable **Location → Precise location** in your app's system settings and retry. See [Android location permissions](https://developer.android.com/develop/sensors-and-location/location/permissions/runtime).
+Version 1.0.1 requires fine location for Android guidance. If only approximate access is granted or permission is denied, Start rejects. The user can enable **Location → Precise location** in your app's system settings and retry. See [Android location permissions](https://developer.android.com/develop/sensors-and-location/location/permissions/runtime).
 
 For notification visibility on Android 13+, use your app's notification-permission flow or the [complete Java host example](docs/getting-started.md#android-notification-permission-example). `POST_NOTIFICATIONS` controls notification visibility; denial does not itself prohibit starting a foreground service. See [Android notification permissions](https://developer.android.com/develop/ui/views/notifications/notification-permission).
 

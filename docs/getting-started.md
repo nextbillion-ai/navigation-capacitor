@@ -1,6 +1,6 @@
 # First integration with the published Capacitor plugin
 
-This guide provides a complete Plan → Select route → Start example for a Capacitor 7 app. Install `@nextbillion-ai/navigation-capacitor@1.0.0` and complete the [platform setup and permissions](../README.md#2-configure-navigation-permissions) first. Use SPM for iOS and JDK 21 for Android.
+This guide provides a complete Plan → Select route → Start example for a Capacitor 7 app. Install `@nextbillion-ai/navigation-capacitor@1.0.1` and complete the [platform setup and permissions](../README.md#2-configure-navigation-permissions) first. Use SPM for iOS and JDK 21 for Android.
 
 ## Complete web UI example
 
